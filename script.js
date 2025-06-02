@@ -6,6 +6,25 @@ let currentView = 'grid';
 let currentFilter = 'all';
 let showSoldItems = false;
 
+// Fetch products from API
+async function fetchProducts() {
+    try {
+        const response = await fetch('https://3joseph3.wixsite.com/movingouttlv/_functions/get_products');
+        const data = await response.json();
+        if (data.success && data.data) {
+            products = data.data;
+            // Dispatch event when products are loaded
+            window.dispatchEvent(new Event('productsLoaded'));
+        } else {
+            console.error('Failed to load products:', data.error);
+            showToast('Failed to load products. Please refresh the page.');
+        }
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        showToast('Error loading products. Please refresh the page.');
+    }
+}
+
 // URL and deep linking functions
 function updateURL(productId = null) {
     const url = new URL(window.location);
@@ -86,8 +105,6 @@ window.addEventListener('popstate', () => {
 
 // Initialize the website
 function initializeSite() {
-    products = [...productData]; // Use productData from products.js
-
     // Apply initial filter (hide sold items by default)
     applyCurrentFilter();
 
@@ -108,15 +125,13 @@ function initializeSite() {
     animateStats();
 }
 
+// Start fetching products when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    fetchProducts();
+});
+
 // Listen for products to be loaded
 window.addEventListener('productsLoaded', initializeSite);
-
-// Fallback: If products are already loaded when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    if (productData && productData.length > 0) {
-        initializeSite();
-    }
-});
 
 function updateSoldCount() {
     const soldCount = products.filter(p => p.sold).length;
