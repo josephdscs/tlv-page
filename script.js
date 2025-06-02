@@ -85,7 +85,7 @@ window.addEventListener('popstate', () => {
 });
 
 // Initialize the website
-document.addEventListener('DOMContentLoaded', function() {
+function initializeSite() {
     products = [...productData]; // Use productData from products.js
 
     // Apply initial filter (hide sold items by default)
@@ -106,6 +106,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Animate hero stats
     animateStats();
+}
+
+// Listen for products to be loaded
+window.addEventListener('productsLoaded', initializeSite);
+
+// Fallback: If products are already loaded when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    if (productData && productData.length > 0) {
+        initializeSite();
+    }
 });
 
 function updateSoldCount() {
