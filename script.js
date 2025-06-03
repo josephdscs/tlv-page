@@ -9,7 +9,7 @@ let showSoldItems = false;
 // Fetch products from API
 async function fetchProducts() {
     try {
-        const response = await fetch('https://3joseph3.wixsite.com/movingouttlv/_functions/get_products');
+        const response = await fetch('https://3joseph3.wixsite.com/movingouttlv/_functions/products');
         const data = await response.json();
         if (data.success && data.data) {
             products = data.data;
