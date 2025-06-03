@@ -360,7 +360,7 @@ function createProductCard(product) {
     return `
         <div class="product-card ${isSold ? 'sold-item' : ''}">
             <div class="product-image">
-                <img src="${product.images[0]}" alt="${product.title}" loading="lazy">
+                <img src="${product.mediaGallery && product.mediaGallery.length > 0 ? product.mediaGallery[0].src : product.images[0]}" alt="${product.title}" loading="lazy">
                 <div class="product-badges">
                     ${soldBadge}
                     ${!isSold ? badges : ''}
@@ -369,6 +369,10 @@ function createProductCard(product) {
                     <i class="fas fa-heart"></i>
                 </button>` : ''}
                 ${isSold ? '<div class="sold-overlay"><span>SOLD</span></div>' : ''}
+                ${product.mediaGallery && product.mediaGallery.length > 1 ? `
+                <div class="image-counter">
+                    <i class="fas fa-images"></i> ${product.mediaGallery.length}
+                </div>` : ''}
             </div>
             <div class="product-content">
                 <div class="product-info">
@@ -449,8 +453,23 @@ function openProductModal(product) {
         <div style="padding: 30px;">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;">
                 <div>
+                    ${product.mediaGallery && product.mediaGallery.length > 0 ? `
+                    <div class="product-gallery">
+                        <div class="main-image">
+                            <img src="${product.mediaGallery[0].src}" alt="${product.title}"
+                                 style="width: 100%; border-radius: 12px; object-fit: cover;">
+                        </div>
+                        ${product.mediaGallery.length > 1 ? `
+                        <div class="thumbnail-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); gap: 10px; margin-top: 10px;">
+                            ${product.mediaGallery.map((img, index) => `
+                                <img src="${img.src}" alt="${product.title} - Image ${index + 1}"
+                                     onclick="updateMainImage(this.src)"
+                                     style="width: 100%; height: 60px; object-fit: cover; border-radius: 6px; cursor: pointer;">
+                            `).join('')}
+                        </div>` : ''}
+                    </div>` : `
                     <img src="${product.images[0]}" alt="${product.title}"
-                         style="width: 100%; border-radius: 12px; object-fit: cover;">
+                         style="width: 100%; border-radius: 12px; object-fit: cover;">`}
                 </div>
                 <div>
                     <h2 style="margin-bottom: 15px; color: var(--color-soft-black);">${product.title}</h2>
@@ -872,6 +891,14 @@ setInterval(() => {
     }
 }, 10000);
 
+// Image gallery functions
+function updateMainImage(src) {
+    const mainImage = document.querySelector('.main-image img');
+    if (mainImage) {
+        mainImage.src = src;
+    }
+}
+
 // Make functions globally available for inline onclick handlers
 window.shareProduct = shareProduct;
 window.buyItem = buyItem;
@@ -881,6 +908,7 @@ window.toggleFavorite = toggleFavorite;
 window.showFavorites = showFavorites;
 window.openWhatsApp = openWhatsApp;
 window.copyProductLink = copyProductLink;
+window.updateMainImage = updateMainImage;
 
 function debounce(func, wait) {
     let timeout;
