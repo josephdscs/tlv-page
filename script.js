@@ -360,8 +360,9 @@ function createProductCard(product) {
     // Add sold badge if item is sold
     const soldBadge = isSold ? '<span class="product-badge sold">✅ SOLD</span>' : '';
 
-    // Get the first image URL and add size parameters
-    const firstImageUrl = product.images ? product.images.replace('~mv2', '~mv2_d_400_400_s_2') : '';
+    // Get the first valid image URL from mediaGallery for larger display, or use a default placeholder
+    const defaultImageUrl = 'public/placeholder.webp';
+    const firstImageUrl = (product.mediaGallery && product.mediaGallery.length > 0 && product.mediaGallery[0].url) ? product.mediaGallery[0].url : defaultImageUrl;
 
     return `
         <div class="product-card ${isSold ? 'sold-item' : ''}">
@@ -455,8 +456,9 @@ function openProductModal(product) {
     updateURL(product.id);
     updateMetaTags(product);
 
-    // Get the first image URL and add size parameters for larger display
-    const firstImageUrl = product.images ? product.images.replace('~mv2', '~mv2_d_800_800_s_2') : '';
+    // Get the first valid image URL from mediaGallery for larger display, or use a default placeholder
+    const defaultImageUrl = 'public/placeholder.webp';
+    const firstImageUrl = (product.mediaGallery && product.mediaGallery.length > 0 && product.mediaGallery[0].url) ? product.mediaGallery[0].url : defaultImageUrl;
 
     modalBody.innerHTML = `
         <div style="padding: 30px;">
@@ -470,14 +472,19 @@ function openProductModal(product) {
                         </div>
                         ${product.mediaGallery.length > 1 ? `
                         <div class="thumbnail-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); gap: 10px; margin-top: 10px;">
-                            ${product.mediaGallery.map((img, index) => `
-                                <img src="${img.url}" alt="${product.title} - Image ${index + 1}"
-                                     onclick="updateMainImage(this.src)"
-                                     style="width: 100%; height: 60px; object-fit: cover; border-radius: 6px; cursor: pointer;">
-                            `).join('')}
+                            ${product.mediaGallery.map((img, index) =>
+                                img.url ? `
+                                    <img src="${img.url}" alt="${product.title} - Image ${index + 1}"
+                                         onclick="updateMainImage(this.src)"
+                                         style="width: 100%; height: 60px; object-fit: cover; border-radius: 6px; cursor: pointer;">
+                                ` : `
+                                    <img src="${defaultImageUrl}" alt="No image available"
+                                         style="width: 100%; height: 60px; object-fit: cover; border-radius: 6px; cursor: pointer;">
+                                `
+                            ).join('')}
                         </div>` : ''}
                     </div>` : `
-                    <img src="${firstImageUrl}" alt="${product.title}"
+                    <img src="${defaultImageUrl}" alt="No image available"
                          style="width: 100%; border-radius: 12px; object-fit: cover;">`}
                 </div>
                 <div>
