@@ -43,10 +43,8 @@ function getProductFromURL() {
 
 function updateMetaTags(product = null) {
     if (product) {
-        // Get the first image URL from either mediaGallery or images array
-        const firstImageUrl = product.mediaGallery && product.mediaGallery.length > 0
-            ? product.mediaGallery[0].url
-            : (product.images && product.images.length > 0 ? product.images[0] : '');
+        // Get the first image URL and add size parameters for social sharing
+        const firstImageUrl = product.images ? product.images.replace('~mv2', '~mv2_d_1200_630_s_2') : '';
 
         // Update meta tags for specific product
         document.title = `${product.title} - ₪${product.price} | MovingOutTLV`;
@@ -362,10 +360,8 @@ function createProductCard(product) {
     // Add sold badge if item is sold
     const soldBadge = isSold ? '<span class="product-badge sold">✅ SOLD</span>' : '';
 
-    // Get the first image URL from either mediaGallery or images array
-    const firstImageUrl = product.mediaGallery && product.mediaGallery.length > 0
-        ? product.mediaGallery[0].url
-        : (product.images && product.images.length > 0 ? product.images[0] : '');
+    // Get the first image URL and add size parameters
+    const firstImageUrl = product.images ? product.images.replace('~mv2', '~mv2_d_400_400_s_2') : '';
 
     return `
         <div class="product-card ${isSold ? 'sold-item' : ''}">
@@ -459,10 +455,8 @@ function openProductModal(product) {
     updateURL(product.id);
     updateMetaTags(product);
 
-    // Get the first image URL from either mediaGallery or images array
-    const firstImageUrl = product.mediaGallery && product.mediaGallery.length > 0
-        ? product.mediaGallery[0].url
-        : (product.images && product.images.length > 0 ? product.images[0] : '');
+    // Get the first image URL and add size parameters for larger display
+    const firstImageUrl = product.images ? product.images.replace('~mv2', '~mv2_d_800_800_s_2') : '';
 
     modalBody.innerHTML = `
         <div style="padding: 30px;">
@@ -598,9 +592,8 @@ function showFavorites() {
             <h2 style="margin-bottom: 20px; text-align: center;">Your Favorites ❤️</h2>
             <div style="display: grid; gap: 15px;">
                 ${favoriteProducts.map(product => {
-                    const firstImageUrl = product.mediaGallery && product.mediaGallery.length > 0
-                        ? product.mediaGallery[0].url
-                        : (product.images && product.images.length > 0 ? product.images[0] : '');
+                    // Get the first image URL and add size parameters for thumbnail
+                    const firstImageUrl = product.images ? product.images.replace('~mv2', '~mv2_d_80_80_s_2') : '';
                     return `
                     <div style="display: flex; gap: 15px; padding: 15px; background: var(--color-gray-light); border-radius: 8px;">
                         <img src="${firstImageUrl}" alt="${product.title}"
