@@ -43,6 +43,11 @@ function getProductFromURL() {
 
 function updateMetaTags(product = null) {
     if (product) {
+        // Get the first image URL from either mediaGallery or images array
+        const firstImageUrl = product.mediaGallery && product.mediaGallery.length > 0
+            ? product.mediaGallery[0].url
+            : (product.images && product.images.length > 0 ? product.images[0] : '');
+
         // Update meta tags for specific product
         document.title = `${product.title} - ₪${product.price} | MovingOutTLV`;
         document.querySelector('meta[name="description"]').content = `${product.description} Only ₪${product.price} (was ₪${product.originalPrice}). ${product.condition} condition. Pickup in Tel Aviv.`;
@@ -50,13 +55,13 @@ function updateMetaTags(product = null) {
         // Update Open Graph tags
         document.querySelector('meta[property="og:title"]').content = `${product.title} - ₪${product.price} | MovingOutTLV`;
         document.querySelector('meta[property="og:description"]').content = `${product.description} Only ₪${product.price} (was ₪${product.originalPrice}). ${product.condition} condition.`;
-        document.querySelector('meta[property="og:image"]').content = product.images[0];
+        document.querySelector('meta[property="og:image"]').content = firstImageUrl;
         document.querySelector('meta[property="og:url"]').content = `${window.location.origin}${window.location.pathname}?product=${product.id}`;
 
         // Update Twitter tags
         document.querySelector('meta[property="twitter:title"]').content = `${product.title} - ₪${product.price} | MovingOutTLV`;
         document.querySelector('meta[property="twitter:description"]').content = `${product.description} Only ₪${product.price} (was ₪${product.originalPrice}). ${product.condition} condition.`;
-        document.querySelector('meta[property="twitter:image"]').content = product.images[0];
+        document.querySelector('meta[property="twitter:image"]').content = firstImageUrl;
         document.querySelector('meta[property="twitter:url"]').content = `${window.location.origin}${window.location.pathname}?product=${product.id}`;
     } else {
         // Reset to default meta tags
@@ -357,10 +362,15 @@ function createProductCard(product) {
     // Add sold badge if item is sold
     const soldBadge = isSold ? '<span class="product-badge sold">✅ SOLD</span>' : '';
 
+    // Get the first image URL from either mediaGallery or images array
+    const firstImageUrl = product.mediaGallery && product.mediaGallery.length > 0
+        ? product.mediaGallery[0].url
+        : (product.images && product.images.length > 0 ? product.images[0] : '');
+
     return `
         <div class="product-card ${isSold ? 'sold-item' : ''}">
             <div class="product-image">
-                <img src="${product.mediaGallery && product.mediaGallery.length > 0 ? product.mediaGallery[0].src : product.images[0]}" alt="${product.title}" loading="lazy">
+                <img src="${firstImageUrl}" alt="${product.title}" loading="lazy">
                 <div class="product-badges">
                     ${soldBadge}
                     ${!isSold ? badges : ''}
@@ -449,6 +459,11 @@ function openProductModal(product) {
     updateURL(product.id);
     updateMetaTags(product);
 
+    // Get the first image URL from either mediaGallery or images array
+    const firstImageUrl = product.mediaGallery && product.mediaGallery.length > 0
+        ? product.mediaGallery[0].url
+        : (product.images && product.images.length > 0 ? product.images[0] : '');
+
     modalBody.innerHTML = `
         <div style="padding: 30px;">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;">
@@ -456,19 +471,19 @@ function openProductModal(product) {
                     ${product.mediaGallery && product.mediaGallery.length > 0 ? `
                     <div class="product-gallery">
                         <div class="main-image">
-                            <img src="${product.mediaGallery[0].src}" alt="${product.title}"
+                            <img src="${firstImageUrl}" alt="${product.title}"
                                  style="width: 100%; border-radius: 12px; object-fit: cover;">
                         </div>
                         ${product.mediaGallery.length > 1 ? `
                         <div class="thumbnail-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); gap: 10px; margin-top: 10px;">
                             ${product.mediaGallery.map((img, index) => `
-                                <img src="${img.src}" alt="${product.title} - Image ${index + 1}"
+                                <img src="${img.url}" alt="${product.title} - Image ${index + 1}"
                                      onclick="updateMainImage(this.src)"
                                      style="width: 100%; height: 60px; object-fit: cover; border-radius: 6px; cursor: pointer;">
                             `).join('')}
                         </div>` : ''}
                     </div>` : `
-                    <img src="${product.images[0]}" alt="${product.title}"
+                    <img src="${firstImageUrl}" alt="${product.title}"
                          style="width: 100%; border-radius: 12px; object-fit: cover;">`}
                 </div>
                 <div>
@@ -582,9 +597,13 @@ function showFavorites() {
         <div style="padding: 30px;">
             <h2 style="margin-bottom: 20px; text-align: center;">Your Favorites ❤️</h2>
             <div style="display: grid; gap: 15px;">
-                ${favoriteProducts.map(product => `
+                ${favoriteProducts.map(product => {
+                    const firstImageUrl = product.mediaGallery && product.mediaGallery.length > 0
+                        ? product.mediaGallery[0].url
+                        : (product.images && product.images.length > 0 ? product.images[0] : '');
+                    return `
                     <div style="display: flex; gap: 15px; padding: 15px; background: var(--color-gray-light); border-radius: 8px;">
-                        <img src="${product.images[0]}" alt="${product.title}"
+                        <img src="${firstImageUrl}" alt="${product.title}"
                              style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
                         <div style="flex: 1;">
                             <h4 style="margin-bottom: 5px;">${product.title}</h4>
@@ -597,8 +616,8 @@ function showFavorites() {
                                 </button>
                             </div>
                         </div>
-                    </div>
-                `).join('')}
+                    </div>`;
+                }).join('')}
             </div>
             <div style="text-align: center; margin-top: 20px;">
                 <button onclick="openWhatsApp()"
