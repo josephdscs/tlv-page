@@ -256,54 +256,106 @@ function initializeEventListeners() {
     });
 
     // Sold toggle
-    document.getElementById('soldToggle').addEventListener('click', handleSoldToggle);
+    const soldToggle = document.getElementById('soldToggle');
+    if (soldToggle) {
+        soldToggle.addEventListener('click', handleSoldToggle);
+    }
 
     // Sort dropdown
-    document.getElementById('sortSelect').addEventListener('change', handleSortChange);
+    const sortSelect = document.getElementById('sortSelect');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', handleSortChange);
+    }
 
     // Email signup
-    document.getElementById('subscribeBtn').addEventListener('click', handleEmailSignup);
-    document.getElementById('closeEmailBar').addEventListener('click', closeEmailBar);
+    const subscribeBtn = document.getElementById('subscribeBtn');
+    if (subscribeBtn) {
+        subscribeBtn.addEventListener('click', handleEmailSignup);
+    }
+
+    const closeEmailBar = document.getElementById('closeEmailBar');
+    if (closeEmailBar) {
+        closeEmailBar.addEventListener('click', closeEmailBar);
+    }
 
     // Modal
-    document.getElementById('closeModal').addEventListener('click', closeModal);
-    document.getElementById('productModal').addEventListener('click', (e) => {
-        if (e.target === e.currentTarget) closeModal();
-    });
+    const closeModal = document.getElementById('closeModal');
+    if (closeModal) {
+        closeModal.addEventListener('click', closeModal);
+    }
+
+    const productModal = document.getElementById('productModal');
+    if (productModal) {
+        productModal.addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeModal();
+        });
+    }
 
     // Floating buttons
-    document.getElementById('floatingWhatsApp').addEventListener('click', openWhatsApp);
-    document.getElementById('floatingCart').addEventListener('click', showFavorites);
+    const floatingWhatsApp = document.getElementById('floatingWhatsApp');
+    if (floatingWhatsApp) {
+        floatingWhatsApp.addEventListener('click', openWhatsApp);
+    }
+
+    const floatingCart = document.getElementById('floatingCart');
+    if (floatingCart) {
+        floatingCart.addEventListener('click', showFavorites);
+    }
 
     // Search
-    document.getElementById('searchBtn').addEventListener('click', toggleSearch);
+    const searchBtn = document.getElementById('searchBtn');
+    if (searchBtn) {
+        searchBtn.addEventListener('click', toggleSearch);
+    }
 
     // Search input events
     const searchInput = document.getElementById('searchInput');
-    searchInput.addEventListener('input', debounce(performSearch, 300)); // Real-time search with debouncing
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            performSearch();
-        }
-    });
+    if (searchInput) {
+        searchInput.addEventListener('input', debounce(performSearch, 300)); // Real-time search with debouncing
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    }
 
     // Cart button
-    document.getElementById('cartBtn').addEventListener('click', showFavorites);
+    const cartBtn = document.getElementById('cartBtn');
+    if (cartBtn) {
+        cartBtn.addEventListener('click', showFavorites);
+    }
 
     // Social sharing
-    document.getElementById('shareWhatsApp').addEventListener('click', shareOnWhatsApp);
-    document.getElementById('shareFacebook').addEventListener('click', shareOnFacebook);
-    document.getElementById('shareTelegram').addEventListener('click', shareOnTelegram);
+    const shareWhatsApp = document.getElementById('shareWhatsApp');
+    if (shareWhatsApp) {
+        shareWhatsApp.addEventListener('click', shareOnWhatsApp);
+    }
+
+    const shareFacebook = document.getElementById('shareFacebook');
+    if (shareFacebook) {
+        shareFacebook.addEventListener('click', shareOnFacebook);
+    }
+
+    const shareTelegram = document.getElementById('shareTelegram');
+    if (shareTelegram) {
+        shareTelegram.addEventListener('click', shareOnTelegram);
+    }
 
     // WhatsApp contact
-    document.getElementById('whatsappBtn').addEventListener('click', openWhatsApp);
+    const whatsappBtn = document.getElementById('whatsappBtn');
+    if (whatsappBtn) {
+        whatsappBtn.addEventListener('click', openWhatsApp);
+    }
 }
 
 // Sold toggle functionality
 function handleSoldToggle() {
     showSoldItems = !showSoldItems;
     const soldBtn = document.getElementById('soldToggle');
+    if (!soldBtn) return;
+
     const icon = soldBtn.querySelector('i');
+    if (!icon) return;
 
     if (showSoldItems) {
         icon.className = 'fas fa-eye';
@@ -375,16 +427,19 @@ function handleViewChange(e) {
 
     // Update grid class for different view
     const grid = document.getElementById('productsGrid');
-    if (view === 'list') {
-        grid.classList.add('list-view');
-    } else {
-        grid.classList.remove('list-view');
+    if (grid) {
+        if (view === 'list') {
+            grid.classList.add('list-view');
+        } else {
+            grid.classList.remove('list-view');
+        }
     }
 }
 
 // Render products
 function renderProducts() {
     const grid = document.getElementById('productsGrid');
+    if (!grid) return;
 
     // Preserve current view class
     const isListView = grid.classList.contains('list-view');
@@ -847,7 +902,10 @@ function shareOnTelegram() {
 
 // Email signup
 function handleEmailSignup() {
-    const email = document.getElementById('emailInput').value;
+    const emailInput = document.getElementById('emailInput');
+    if (!emailInput) return;
+
+    const email = emailInput.value;
     if (!email || !email.includes('@')) {
         showToast('Please enter a valid email address');
         return;
@@ -855,7 +913,7 @@ function handleEmailSignup() {
 
     // Simulate API call
     showToast('Thanks! We\'ll notify you when new items arrive! 📧');
-    document.getElementById('emailInput').value = '';
+    emailInput.value = '';
 
     // Hide the email bar after successful signup
     setTimeout(() => {
@@ -865,6 +923,8 @@ function handleEmailSignup() {
 
 function showEmailBanner() {
     const emailBar = document.getElementById('emailBar');
+    if (!emailBar) return;
+
     emailBar.style.display = 'block';
     // Trigger the slide-down animation
     setTimeout(() => {
@@ -874,6 +934,8 @@ function showEmailBanner() {
 
 function closeEmailBar() {
     const emailBar = document.getElementById('emailBar');
+    if (!emailBar) return;
+
     emailBar.classList.remove('show');
     // Hide the element after animation completes
     setTimeout(() => {
@@ -885,6 +947,8 @@ function closeEmailBar() {
 function toggleSearch() {
     // Focus on search input when search button is clicked
     const searchInput = document.getElementById('searchInput');
+    if (!searchInput) return;
+
     searchInput.focus();
 
     // Perform search if there's already text
@@ -894,7 +958,10 @@ function toggleSearch() {
 }
 
 function performSearch() {
-    const searchTerm = document.getElementById('searchInput').value.trim();
+    const searchInput = document.getElementById('searchInput');
+    if (!searchInput) return;
+
+    const searchTerm = searchInput.value.trim();
 
     if (searchTerm === '') {
         // If search is empty, apply current filter
@@ -931,7 +998,10 @@ function performSearch() {
 }
 
 function clearSearch() {
-    document.getElementById('searchInput').value = '';
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.value = '';
+    }
     // Reset to current filter
     if (currentFilter === 'all') {
         filteredProducts = [...products];
@@ -944,27 +1014,34 @@ function clearSearch() {
 // Utility functions
 function updateCartCounts() {
     const count = favorites.length;
-    document.getElementById('cartCount').textContent = count;
-    document.getElementById('cartCountFloat').textContent = count;
+    const cartCount = document.getElementById('cartCount');
+    const cartCountFloat = document.getElementById('cartCountFloat');
+
+    if (cartCount) cartCount.textContent = count;
+    if (cartCountFloat) cartCountFloat.textContent = count;
 }
 
 function updateStats() {
-    document.getElementById('totalItems').textContent = products.length;
-    // Simulate sold items animation
-    animateNumber(document.getElementById('soldToday'), 23);
+    const totalItemsElement = document.getElementById('totalItems');
+    if (totalItemsElement) {
+        // Count only available (non-sold) items
+        const availableItems = products.filter(product => !product.sold).length;
+        totalItemsElement.textContent = availableItems;
+    }
 }
 
 function animateStats() {
     const totalItems = document.getElementById('totalItems');
-    const soldToday = document.getElementById('soldToday');
-
-    animateNumber(totalItems, products.length);
-    setTimeout(() => {
-        animateNumber(soldToday, 23);
-    }, 500);
+    if (totalItems) {
+        // Count only available (non-sold) items
+        const availableItems = products.filter(product => !product.sold).length;
+        animateNumber(totalItems, availableItems);
+    }
 }
 
 function animateNumber(element, target) {
+    if (!element) return; // Guard against null elements
+
     let current = 0;
     const increment = target / 30;
     const timer = setInterval(() => {
@@ -981,11 +1058,11 @@ function showToast(message) {
     const toast = document.getElementById('toast');
     const toastMessage = document.getElementById('toastMessage');
 
-    toastMessage.textContent = message;
-    toast.classList.add('active');
+    if (toastMessage) toastMessage.textContent = message;
+    if (toast) toast.classList.add('active');
 
     setTimeout(() => {
-        toast.classList.remove('active');
+        if (toast) toast.classList.remove('active');
     }, 3000);
 }
 
@@ -1023,19 +1100,6 @@ setTimeout(() => {
         observer.observe(el);
     });
 }, 1000);
-
-// Simulate real-time updates
-setInterval(() => {
-    const soldElement = document.getElementById('soldToday');
-    const currentSold = parseInt(soldElement.textContent);
-    if (Math.random() < 0.3) { // 30% chance every 10 seconds
-        soldElement.textContent = currentSold + 1;
-        soldElement.classList.add('highlight-animation');
-        setTimeout(() => {
-            soldElement.classList.remove('highlight-animation');
-        }, 500);
-    }
-}, 10000);
 
 // Image gallery functions
 function updateMainImage(src) {
@@ -1091,8 +1155,11 @@ function handleSortChange(e) {
     currentSort = sortOption;
 
     // Update active sort button
-    document.getElementById('sortSelect').classList.remove('active');
-    document.getElementById('sortSelect').classList.add('active');
+    const sortSelect = document.getElementById('sortSelect');
+    if (sortSelect) {
+        sortSelect.classList.remove('active');
+        sortSelect.classList.add('active');
+    }
 
     // Apply sort
     sortProducts();
@@ -1101,6 +1168,8 @@ function handleSortChange(e) {
 
 function updateSoldToggleVisibility() {
     const soldToggle = document.getElementById('soldToggle');
+    if (!soldToggle) return;
+
     const hasSoldItems = products.some(product => product.sold);
 
     if (hasSoldItems) {
@@ -1135,7 +1204,10 @@ function updateLifestyleButtonVisibility() {
         // If lifestyle was the current filter and it's being hidden, switch to "all"
         if (currentFilter === 'lifestyle') {
             currentFilter = 'all';
-            document.querySelector('.filter-btn[data-category="all"]').classList.add('active');
+            const allBtn = document.querySelector('.filter-btn[data-category="all"]');
+            if (allBtn) {
+                allBtn.classList.add('active');
+            }
             applyCurrentFilter();
         }
     }
