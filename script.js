@@ -436,7 +436,6 @@ function renderProducts() {
 // Create product card HTML
 function createProductCard(product) {
     const isFavorite = favorites.includes(product.id);
-    const discount = Math.round((1 - product.price / product.originalPrice) * 100);
     const isSold = product.sold;
 
     const badges = product.badges.map(badge => {
@@ -456,6 +455,11 @@ function createProductCard(product) {
     // Get the first valid image URL from mediaGallery for larger display, or use a default placeholder
     const defaultImageUrl = 'public/placeholder.webp';
     const firstImageUrl = (product.mediaGallery && product.mediaGallery.length > 0) ? product.mediaGallery[0] : defaultImageUrl;
+
+    // Create price display with only current price
+    const priceDisplay = isSold ?
+        `<span class="current-price sold-price">₪${product.price}</span>` :
+        `<span class="current-price">₪${product.price}</span>`;
 
     return `
         <div class="product-card ${isSold ? 'sold-item' : ''}">
@@ -479,7 +483,7 @@ function createProductCard(product) {
                     <h4 class="product-title">${product.title}</h4>
                     <p class="product-description">${product.description}</p>
                     <div class="product-price">
-                        <span class="current-price ${isSold ? 'sold-price' : ''}">₪${product.price}</span>
+                        ${priceDisplay}
                     </div>
                 </div>
                 ${!isSold ? `
