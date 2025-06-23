@@ -376,10 +376,10 @@ function applyCurrentFilter() {
     if (currentFilter === 'all') {
         filteredProducts = [...products];
     } else {
-        // Case-insensitive category matching
+        // Case-insensitive category matching with whitespace handling
         filteredProducts = products.filter(product => {
-            const productCategory = product.category ? product.category.toLowerCase() : '';
-            const filterCategory = currentFilter.toLowerCase();
+            const productCategory = product.category ? product.category.toLowerCase().trim() : '';
+            const filterCategory = currentFilter.toLowerCase().trim();
 
             // Handle the lifestyle category - includes items that don't match other categories
             if (filterCategory === 'lifestyle') {
@@ -969,17 +969,19 @@ function performSearch() {
         return;
     }
 
-    // Filter products based on search term
+    // Filter products based on search term with whitespace handling
     let searchResults = products.filter(product =>
         product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (product.category ? product.category.toLowerCase().trim() : '').includes(searchTerm.toLowerCase()) ||
         product.condition.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     // Apply category filter if not "all"
     if (currentFilter !== 'all') {
-        searchResults = searchResults.filter(product => product.category === currentFilter);
+        searchResults = searchResults.filter(product =>
+            (product.category ? product.category.toLowerCase().trim() : '') === currentFilter.toLowerCase().trim()
+        );
     }
 
     // Apply sold filter
@@ -1006,7 +1008,9 @@ function clearSearch() {
     if (currentFilter === 'all') {
         filteredProducts = [...products];
     } else {
-        filteredProducts = products.filter(product => product.category === currentFilter);
+        filteredProducts = products.filter(product =>
+            (product.category ? product.category.toLowerCase().trim() : '') === currentFilter.toLowerCase().trim()
+        );
     }
     renderProducts();
 }
@@ -1192,7 +1196,7 @@ function updateLifestyleButtonVisibility() {
     // Check if there are any items that don't match the main categories
     const mainCategories = ['furniture', 'appliances', 'toys', 'baby', 'outdoor'];
     const hasLifestyleItems = products.some(product => {
-        const productCategory = product.category ? product.category.toLowerCase() : '';
+        const productCategory = product.category ? product.category.toLowerCase().trim() : '';
         return !mainCategories.some(cat => productCategory === cat);
     });
 
