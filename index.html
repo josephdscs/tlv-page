@@ -4,24 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MovingOutTLV - Designer Home Sale | Everything Must Go!</title>
-    <meta name="description" content="Exclusive pop-up sale in Tel Aviv! Designer furniture, home goods, and more at unbeatable prices. Pickup only - limited time!">
+    <meta name="description"
+        content="Exclusive pop-up sale in Tel Aviv! Designer furniture, home goods, and more at unbeatable prices. Pickup only - limited time!">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="public/favicon.svg">
-    <link rel="alternate icon" type="image/png" href="public/favicon.png">
+    <link rel="icon" type="image/png" href="public/favicon.png?v=1">
+    <link rel="alternate icon" type="image/png" href="public/favicon.png?v=1">
+    <link rel="shortcut icon" type="image/png" href="public/favicon.png?v=1">
+    <link rel="apple-touch-icon" href="public/favicon.png?v=1">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://movingouttlv.com/">
     <meta property="og:title" content="MovingOutTLV - Designer Home Sale | Everything Must Go!">
-    <meta property="og:description" content="Exclusive pop-up sale in Tel Aviv! Designer furniture, home goods, and more at unbeatable prices. Pickup only - limited time!">
+    <meta property="og:description"
+        content="Exclusive pop-up sale in Tel Aviv! Designer furniture, home goods, and more at unbeatable prices. Pickup only - limited time!">
     <meta property="og:image" content="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://movingouttlv.com/">
     <meta property="twitter:title" content="MovingOutTLV - Designer Home Sale | Everything Must Go!">
-    <meta property="twitter:description" content="Exclusive pop-up sale in Tel Aviv! Designer furniture, home goods, and more at unbeatable prices. Pickup only - limited time!">
+    <meta property="twitter:description"
+        content="Exclusive pop-up sale in Tel Aviv! Designer furniture, home goods, and more at unbeatable prices. Pickup only - limited time!">
     <meta property="twitter:image" content="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,7 +42,6 @@
             <div class="header-content">
                 <div class="logo">
                     <h1>MovingOut<span class="tlv">TLV</span></h1>
-                    <p class="tagline">Designer Sale • Everything Must Go!</p>
                 </div>
                 <div class="header-actions">
                     <div class="search-container">
@@ -53,6 +57,24 @@
                 </div>
             </div>
         </div>
+        <!-- Email Signup Bar -->
+        <div class="email-signup-bar" id="emailBar" style="display: none;">
+            <div class="container signup-content">
+                <div class="signup-text">
+                    <i class="fas fa-bell"></i>
+                    <span>Get notified when we add new treasures!</span>
+                </div>
+                <div class="signup-content">
+                    <div class="signup-form">
+                        <input type="email" placeholder="your.email@example.com" id="emailInput">
+                        <button type="submit" id="subscribeBtn">Notify Me</button>
+                    </div>
+                    <button class="close-bar" id="closeEmailBar">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
     </header>
 
     <!-- Hero Section -->
@@ -60,12 +82,18 @@
         <div class="container">
             <div class="hero-content">
                 <div class="hero-text">
-                    <h2>🏠 Our Home, Your Treasure</h2>
-                    <p class="hero-subtitle">A loving family's curated collection • Designer pieces at moving-sale prices</p>
+                    <h2 style="font-size: 2.5rem;"><img src="public/logo.png" alt="MovingOutTLV Logo"
+                            style="display: inline-block; vertical-align: middle; margin-right: 8px; height: 90px; width: auto;">Our
+                        Stuff, Your Treasure</h2>
+                    <p class="hero-subtitle">Quality items at Moving-sale prices</p>
                     <div class="urgency-badges">
                         <span class="badge urgent">⏰ Limited Time</span>
                         <span class="badge pickup">📍 Pickup Only - Tel Aviv</span>
                         <span class="badge payment">💳 Paybox • Bit</span>
+                    </div>
+                    <div class="daily-updates-message">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Adding new stuff every day! Check back often.</span>
                     </div>
                 </div>
                 <div class="hero-stats">
@@ -73,33 +101,10 @@
                         <span class="number" id="totalItems">127</span>
                         <span class="label">Items Available</span>
                     </div>
-                    <div class="stat">
-                        <span class="number timer" id="soldToday">23</span>
-                        <span class="label">Sold Today</span>
-                    </div>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- Email Signup Bar -->
-    <div class="email-signup-bar" id="emailBar">
-        <div class="container">
-            <div class="signup-content">
-                <div class="signup-text">
-                    <i class="fas fa-bell"></i>
-                    <span>Get notified when we add new treasures!</span>
-                </div>
-                <div class="signup-form">
-                    <input type="email" placeholder="your.email@example.com" id="emailInput">
-                    <button type="submit" id="subscribeBtn">Notify Me</button>
-                </div>
-                <button class="close-bar" id="closeEmailBar">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        </div>
-    </div>
 
     <!-- Filters -->
     <section class="filters-section">
@@ -107,13 +112,10 @@
             <div class="filters">
                 <button class="filter-btn active" data-category="all">All Items</button>
                 <button class="filter-btn" data-category="furniture">🪑 Furniture</button>
-                <button class="filter-btn" data-category="kitchen">🍽️ Kitchen</button>
-                <button class="filter-btn" data-category="baby">👶 Baby & Kids</button>
-                <button class="filter-btn" data-category="clothing">👕 Clothing</button>
-                <button class="filter-btn" data-category="electronics">📱 Electronics</button>
-                <button class="filter-btn" data-category="decor">🎨 Decor</button>
-                <button class="filter-btn" data-category="tools">🔧 Tools</button>
-                <button class="filter-btn" data-category="other">✨ Other</button>
+                <button class="filter-btn" data-category="appliances">🔌 Appliances</button>
+                <button class="filter-btn" data-category="toys">🧸 Toys</button>
+                <button class="filter-btn" data-category="baby">👶 Baby</button>
+                <button class="filter-btn" data-category="outdoor">🚴 Outdoor</button>
             </div>
         </div>
     </section>
@@ -124,6 +126,11 @@
             <div class="section-header">
                 <h3>Browse Our Collection</h3>
                 <div class="view-options">
+                    <select class="sort-select" id="sortSelect">
+                        <option value="default">Sort by</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                    </select>
                     <button class="view-btn active" data-view="grid">
                         <i class="fas fa-th"></i>
                     </button>
@@ -163,7 +170,8 @@
                     <h4>How It Works</h4>
                     <div class="faq-items">
                         <div class="faq-item">
-                            <strong>📅 Schedule Viewing:</strong> Book an appointment to see items in person before buying
+                            <strong>📅 Schedule Viewing:</strong> Book an appointment to see items in person before
+                            buying
                         </div>
                         <div class="faq-item">
                             <strong>🛒 Buy Now:</strong> Purchase items instantly with immediate pickup coordination

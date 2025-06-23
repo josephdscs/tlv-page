@@ -5,13 +5,96 @@ let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 let currentView = 'grid';
 let currentFilter = 'all';
 let showSoldItems = false;
+let currentSort = 'default';
+
+// Fallback example items
+const fallbackItems = [
+    {
+        id: 'example1',
+        title: 'Vintage Wooden Coffee Table',
+        description: 'Beautiful solid wood coffee table with storage shelf. Perfect condition, great for any living room.',
+        price: 450,
+        originalPrice: 1200,
+        condition: 'Excellent',
+        category: 'furniture',
+        images: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800',
+        mediaGallery: ['https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800'],
+        badges: ['urgent'],
+        sold: false,
+        soldDate: null
+    },
+    {
+        id: 'example2',
+        title: 'Kitchen Aid Mixer',
+        description: 'Professional stand mixer in red. Includes all attachments. Barely used, like new condition.',
+        price: 800,
+        originalPrice: 1800,
+        condition: 'Like New',
+        category: 'appliances',
+        images: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800',
+        mediaGallery: ['https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800'],
+        badges: ['staff-pick'],
+        sold: false,
+        soldDate: null
+    },
+    {
+        id: 'example3',
+        title: 'Designer Floor Lamp',
+        description: 'Modern floor lamp with adjustable head. Perfect reading light. Contemporary design.',
+        price: 200,
+        originalPrice: 600,
+        condition: 'Good',
+        category: 'furniture',
+        images: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=800',
+        mediaGallery: ['https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=800'],
+        badges: ['almost-gone'],
+        sold: false,
+        soldDate: null
+    },
+    {
+        id: 'example4',
+        title: 'Mountain Bike',
+        description: 'Quality mountain bike in excellent condition. Perfect for Tel Aviv trails and beach rides. Includes helmet.',
+        price: 350,
+        originalPrice: 800,
+        condition: 'Excellent',
+        category: 'outdoor',
+        images: 'https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=800',
+        mediaGallery: ['https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=800'],
+        badges: ['urgent'],
+        sold: false,
+        soldDate: null
+    },
+    {
+        id: 'example5',
+        title: 'Beach Umbrella & Chairs Set',
+        description: 'Complete beach setup with large umbrella, 2 comfortable chairs, and carrying bag. Perfect for Tel Aviv beach days.',
+        price: 120,
+        originalPrice: 300,
+        condition: 'Good',
+        category: 'outdoor',
+        images: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800',
+        mediaGallery: ['https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800'],
+        badges: [],
+        sold: true,
+        soldDate: '2025-01-15'
+    }
+];
 
 // Fetch products from API
 async function fetchProducts() {
+    // Force fallback items in development mode for testing
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        console.log('Development mode detected - using fallback items');
+        products = fallbackItems;
+        window.dispatchEvent(new Event('productsLoaded'));
+        return;
+    }
+
     try {
         const response = await fetch('https://3joseph3.wixsite.com/movingouttlv/_functions/products');
         const data = await response.json();
-        if (data.success && data.data) {
+        if (data.success && data.data && data.data.length > 0) {
             products = data.data;
             // Dispatch event when products are loaded
             window.dispatchEvent(new Event('productsLoaded'));
@@ -119,10 +202,10 @@ function initializeSite() {
     // Check for deep link on page load
     handleURLChange();
 
-    // Show email bar after 3 seconds
+    // Show email signup banner after 10 seconds
     setTimeout(() => {
-        document.getElementById('emailBar').style.display = 'block';
-    }, 3000);
+        showEmailBanner();
+    }, 10000);
 
     // Animate hero stats
     animateStats();
@@ -160,6 +243,9 @@ function initializeEventListeners() {
 
     // Sold toggle
     document.getElementById('soldToggle').addEventListener('click', handleSoldToggle);
+
+    // Sort dropdown
+    document.getElementById('sortSelect').addEventListener('change', handleSortChange);
 
     // Email signup
     document.getElementById('subscribeBtn').addEventListener('click', handleEmailSignup);
@@ -220,15 +306,22 @@ function handleSoldToggle() {
 }
 
 function applyCurrentFilter() {
-    // Start with all products or filter by category
-    let baseProducts = currentFilter === 'all' ? [...products] : products.filter(product => product.category === currentFilter);
-
-    // Apply sold filter
-    if (!showSoldItems) {
-        baseProducts = baseProducts.filter(product => !product.sold);
+    // Filter by category
+    if (currentFilter === 'all') {
+        filteredProducts = [...products];
+    } else {
+        filteredProducts = products.filter(product => product.category === currentFilter);
     }
 
-    filteredProducts = baseProducts;
+    // Filter by sold status
+    if (!showSoldItems) {
+        filteredProducts = filteredProducts.filter(product => !product.sold);
+    }
+
+    // Apply sorting
+    sortProducts();
+
+    // Render the filtered and sorted products
     renderProducts();
 }
 
@@ -387,9 +480,6 @@ function createProductCard(product) {
                     <p class="product-description">${product.description}</p>
                     <div class="product-price">
                         <span class="current-price ${isSold ? 'sold-price' : ''}">₪${product.price}</span>
-                        <span class="original-price">₪${product.originalPrice}</span>
-                        <span class="discount">-${discount}%</span>
-                        ${isSold ? `<span class="sold-date">Sold ${formatSoldDate(product.soldDate)}</span>` : ''}
                     </div>
                 </div>
                 ${!isSold ? `
@@ -486,10 +576,8 @@ function openProductModal(product) {
                     <h2 style="margin-bottom: 15px; color: var(--color-soft-black);">${product.title}</h2>
                     <p style="color: var(--color-gray-dark); margin-bottom: 20px; line-height: 1.6;">${product.description}</p>
 
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; justify-content: flex-end; margin-bottom: 20px;">
                         <span style="font-size: 2rem; font-weight: 700; color: var(--color-sage);">₪${product.price}</span>
-                        <span style="text-decoration: line-through; color: var(--color-gray-dark);">₪${product.originalPrice}</span>
-                        <span style="background: var(--color-red); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">-${discount}%</span>
                     </div>
 
                     <div style="background: var(--color-gray-light); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
@@ -745,8 +833,22 @@ function handleEmailSignup() {
     }, 2000);
 }
 
+function showEmailBanner() {
+    const emailBar = document.getElementById('emailBar');
+    emailBar.style.display = 'block';
+    // Trigger the slide-down animation
+    setTimeout(() => {
+        emailBar.classList.add('show');
+    }, 100);
+}
+
 function closeEmailBar() {
-    document.getElementById('emailBar').style.display = 'none';
+    const emailBar = document.getElementById('emailBar');
+    emailBar.classList.remove('show');
+    // Hide the element after animation completes
+    setTimeout(() => {
+        emailBar.style.display = 'none';
+    }, 500);
 }
 
 // Search functionality
@@ -934,4 +1036,35 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
     };
+}
+
+// Sort products based on current sort option
+function sortProducts() {
+    if (currentSort === 'default') {
+        // Keep original order
+        return;
+    }
+
+    filteredProducts.sort((a, b) => {
+        if (currentSort === 'price-low') {
+            return a.price - b.price;
+        } else if (currentSort === 'price-high') {
+            return b.price - a.price;
+        }
+        return 0;
+    });
+}
+
+// Sort functionality
+function handleSortChange(e) {
+    const sortOption = e.target.value;
+    currentSort = sortOption;
+
+    // Update active sort button
+    document.getElementById('sortSelect').classList.remove('active');
+    document.getElementById('sortSelect').classList.add('active');
+
+    // Apply sort
+    sortProducts();
+    renderProducts();
 }
