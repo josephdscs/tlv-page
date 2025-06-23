@@ -4,7 +4,7 @@ let filteredProducts = [];
 let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 let currentView = 'grid';
 let currentFilter = 'all';
-let showSoldItems = false;
+let showSoldItems = true;
 let currentSort = 'default';
 
 // Fallback example items
@@ -191,13 +191,26 @@ window.addEventListener('popstate', () => {
 
 // Initialize the website
 function initializeSite() {
-    // Apply initial filter (hide sold items by default)
+    // Apply initial filter (show sold items by default)
     applyCurrentFilter();
 
     initializeEventListeners();
     updateCartCounts();
     updateStats();
     updateSoldCount();
+    updateSoldToggleVisibility();
+    updateLifestyleButtonVisibility();
+
+    // Set sold toggle to active state by default
+    const soldBtn = document.getElementById('soldToggle');
+    if (soldBtn) {
+        soldBtn.classList.add('active');
+        const icon = soldBtn.querySelector('i');
+        if (icon) {
+            icon.className = 'fas fa-eye';
+        }
+        soldBtn.title = 'Hide Sold Items';
+    }
 
     // Check for deep link on page load
     handleURLChange();
@@ -225,6 +238,7 @@ function updateSoldCount() {
     if (soldCountElement) {
         soldCountElement.textContent = soldCount;
     }
+    updateSoldToggleVisibility();
 }
 
 // Event listeners
@@ -310,7 +324,19 @@ function applyCurrentFilter() {
     if (currentFilter === 'all') {
         filteredProducts = [...products];
     } else {
-        filteredProducts = products.filter(product => product.category === currentFilter);
+        // Case-insensitive category matching
+        filteredProducts = products.filter(product => {
+            const productCategory = product.category ? product.category.toLowerCase() : '';
+            const filterCategory = currentFilter.toLowerCase();
+
+            // Handle the lifestyle category - includes items that don't match other categories
+            if (filterCategory === 'lifestyle') {
+                const mainCategories = ['furniture', 'appliances', 'toys', 'baby', 'outdoor'];
+                return !mainCategories.some(cat => productCategory === cat);
+            }
+
+            return productCategory === filterCategory;
+        });
     }
 
     // Filter by sold status
@@ -1071,4 +1097,46 @@ function handleSortChange(e) {
     // Apply sort
     sortProducts();
     renderProducts();
+}
+
+function updateSoldToggleVisibility() {
+    const soldToggle = document.getElementById('soldToggle');
+    const hasSoldItems = products.some(product => product.sold);
+
+    if (hasSoldItems) {
+        soldToggle.style.display = 'flex';
+        // Update the sold count
+        const soldCount = products.filter(product => product.sold).length;
+        const soldCountElement = soldToggle.querySelector('.sold-count');
+        if (soldCountElement) {
+            soldCountElement.textContent = soldCount;
+        }
+    } else {
+        soldToggle.style.display = 'none';
+    }
+}
+
+function updateLifestyleButtonVisibility() {
+    const lifestyleBtn = document.querySelector('.filter-btn[data-category="lifestyle"]');
+    if (!lifestyleBtn) return;
+
+    // Check if there are any items that don't match the main categories
+    const mainCategories = ['furniture', 'appliances', 'toys', 'baby', 'outdoor'];
+    const hasLifestyleItems = products.some(product => {
+        const productCategory = product.category ? product.category.toLowerCase() : '';
+        return !mainCategories.some(cat => productCategory === cat);
+    });
+
+    if (hasLifestyleItems) {
+        lifestyleBtn.style.display = 'flex';
+    } else {
+        lifestyleBtn.style.display = 'none';
+
+        // If lifestyle was the current filter and it's being hidden, switch to "all"
+        if (currentFilter === 'lifestyle') {
+            currentFilter = 'all';
+            document.querySelector('.filter-btn[data-category="all"]').classList.add('active');
+            applyCurrentFilter();
+        }
+    }
 }
