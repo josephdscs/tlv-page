@@ -279,9 +279,9 @@ function initializeEventListeners() {
     }
 
     // Modal
-    const closeModal = document.getElementById('closeModal');
-    if (closeModal) {
-        closeModal.addEventListener('click', closeModal);
+    const closeModalBtn = document.getElementById('closeModal');
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', closeModal);
     }
 
     const productModal = document.getElementById('productModal');
