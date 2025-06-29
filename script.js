@@ -201,6 +201,9 @@ function initializeSite() {
     updateSoldToggleVisibility();
     updateLifestyleButtonVisibility();
 
+    // Initialize notification bell state for mobile
+    initializeNotificationBell();
+
     // Set sold toggle to active state by default
     const soldBtn = document.getElementById('soldToggle');
     if (soldBtn) {
@@ -222,6 +225,15 @@ function initializeSite() {
 
     // Animate hero stats
     animateStats();
+}
+
+// Initialize notification bell button state
+function initializeNotificationBell() {
+    const notifyBtn = document.getElementById('notifyBtn');
+    if (notifyBtn && localStorage.getItem('emailSignup')) {
+        notifyBtn.classList.add('active');
+        notifyBtn.title = 'Notifications enabled!';
+    }
 }
 
 // Start fetching products when DOM is ready
@@ -275,7 +287,9 @@ function initializeEventListeners() {
 
     const closeEmailBar = document.getElementById('closeEmailBar');
     if (closeEmailBar) {
-        closeEmailBar.addEventListener('click', closeEmailBar);
+        closeEmailBar.addEventListener('click', () => {
+            document.getElementById('emailBar').style.display = 'none';
+        });
     }
 
     // Modal
@@ -345,6 +359,32 @@ function initializeEventListeners() {
     const whatsappBtn = document.getElementById('whatsappBtn');
     if (whatsappBtn) {
         whatsappBtn.addEventListener('click', openWhatsApp);
+    }
+
+    // Mobile notification bell button
+    const notifyBtn = document.getElementById('notifyBtn');
+    if (notifyBtn) {
+        notifyBtn.addEventListener('click', function() {
+            // Show email signup modal or form on mobile
+            showMobileEmailSignup();
+        });
+    }
+
+        // Email signup functionality
+    const emailInput = document.getElementById('emailInput');
+    const closeEmailBarBtn = document.getElementById('closeEmailBar');
+
+    if (subscribeBtn && emailInput) {
+        subscribeBtn.addEventListener('click', handleEmailSignup);
+        emailInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleEmailSignup();
+            }
+        });
+    }
+
+    if (closeEmailBarBtn) {
+        closeEmailBarBtn.addEventListener('click', closeEmailBar);
     }
 }
 
@@ -615,11 +655,22 @@ function formatSoldDate(dateString) {
     return date.toLocaleDateString();
 }
 
+// Check if device is mobile
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+}
+
 // Product modal
 function openProductModal(product) {
     // Don't open modal for sold items
     if (product.sold) {
         showToast(`This item has been sold on ${formatSoldDate(product.soldDate)}`);
+        return;
+    }
+
+    // Don't open modal on mobile devices - instead just show a toast
+    if (isMobileDevice()) {
+        showToast(`Tap the WhatsApp button below to contact about: ${product.title}`);
         return;
     }
 
@@ -804,7 +855,8 @@ function showFavorites() {
 function viewItem(product) {
     showToast(`Scheduling viewing appointment for ${product.title}... 📅`);
     setTimeout(() => {
-        openWhatsApp(`Hi! I'd like to schedule a viewing appointment for: ${product.title} (₪${product.price}). What times work best for you today or tomorrow?`);
+        const productUrl = `${window.location.origin}${window.location.pathname}?product=${product.id}`;
+        openWhatsApp(`Hi! I'd like to schedule a viewing appointment for: ${product.title} (₪${product.price}). What times work best for you today or tomorrow?\n\nDirect link: ${productUrl}`);
     }, 1000);
 }
 
@@ -812,14 +864,16 @@ function buyItem(product) {
     showToast(`Connecting you to purchase ${product.title}... 💳`);
     // In a real app, this would open payment gateway
     setTimeout(() => {
-        openWhatsApp(`Hi! I want to buy: ${product.title} (₪${product.price}). Ready to pay now!`);
+        const productUrl = `${window.location.origin}${window.location.pathname}?product=${product.id}`;
+        openWhatsApp(`Hi! I want to buy: ${product.title} (₪${product.price}). Ready to pay now!\n\nDirect link: ${productUrl}`);
     }, 1000);
 }
 
 function contactSeller(product) {
     showToast(`Opening chat about ${product.title}... 💬`);
     setTimeout(() => {
-        openWhatsApp(`Hi! I have questions about: ${product.title} (₪${product.price}). Can you tell me more?`);
+        const productUrl = `${window.location.origin}${window.location.pathname}?product=${product.id}`;
+        openWhatsApp(`Hi! I have questions about: ${product.title} (₪${product.price}). Can you tell me more?\n\nDirect link: ${productUrl}`);
     }, 1000);
 }
 
@@ -922,6 +976,16 @@ function handleEmailSignup() {
 }
 
 function showEmailBanner() {
+    // Skip showing email banner on mobile devices - they use the bell icon instead
+    if (window.innerWidth <= 768) {
+        return;
+    }
+
+    // Check if user already closed the banner
+    if (localStorage.getItem('emailBarClosed') === 'true') {
+        return;
+    }
+
     const emailBar = document.getElementById('emailBar');
     if (!emailBar) return;
 
@@ -934,13 +998,11 @@ function showEmailBanner() {
 
 function closeEmailBar() {
     const emailBar = document.getElementById('emailBar');
-    if (!emailBar) return;
-
-    emailBar.classList.remove('show');
-    // Hide the element after animation completes
-    setTimeout(() => {
+    if (emailBar) {
+        emailBar.classList.remove('show');
         emailBar.style.display = 'none';
-    }, 500);
+        localStorage.setItem('emailBarClosed', 'true');
+    }
 }
 
 // Search functionality
@@ -1215,4 +1277,34 @@ function updateLifestyleButtonVisibility() {
             applyCurrentFilter();
         }
     }
+}
+
+// Mobile email signup function
+function showMobileEmailSignup() {
+    const email = prompt("📧 Get notified when we add new treasures!\n\nEnter your email address:");
+
+    if (email && email.trim()) {
+        if (isValidEmail(email.trim())) {
+            // Simulate email signup
+            showToast('🎉 Thanks! We\'ll notify you of new items.');
+
+            // Mark notification button as active
+            const notifyBtn = document.getElementById('notifyBtn');
+            if (notifyBtn) {
+                notifyBtn.classList.add('active');
+                notifyBtn.title = 'Notifications enabled!';
+            }
+
+            // Store in localStorage (same as regular signup)
+            localStorage.setItem('emailSignup', email.trim());
+        } else {
+            showToast('Please enter a valid email address.');
+        }
+    }
+}
+
+// Helper function to validate email
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
 }

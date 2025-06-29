@@ -198,8 +198,6 @@ body {
 .cart-btn:hover {
     background: var(--color-sage);
     color: white;
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-soft);
 }
 
 .cart-count {
@@ -216,6 +214,39 @@ body {
     align-items: center;
     justify-content: center;
     font-weight: 600;
+}
+
+/* Notification Bell Button (Mobile Only) */
+.notify-btn {
+    background: var(--color-off-white);
+    border: 1px solid var(--color-gray-medium);
+    border-radius: 4px;
+    padding: 0 12px;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    position: relative;
+    color: var(--color-gray-dark);
+    height: 42px;
+    display: none; /* Hidden by default, shown only on mobile */
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+}
+
+.notify-btn:hover {
+    background: var(--color-sage);
+    color: white;
+}
+
+.notify-btn.active {
+    background: var(--color-warm-yellow);
+    color: var(--color-soft-black);
+    animation: pulse 2s infinite;
+}
+
+/* Mobile-only class */
+.mobile-only {
+    display: none;
 }
 
 /* Hero Section */
@@ -1221,9 +1252,24 @@ body {
         justify-content: center;
     }
 
+    /* Show notification bell button on mobile */
+    .mobile-only {
+        display: flex !important;
+    }
+
+    /* Hide email signup bar on mobile */
+    .email-signup-bar {
+        display: none !important;
+    }
+
     .search-container {
         min-width: 200px;
         height: 38px;
+    }
+
+    .notify-btn {
+        height: 38px;
+        min-width: 38px;
     }
 
     .hero {
@@ -1316,6 +1362,52 @@ body {
     .email-signup-bar.show {
         max-height: 120px;
     }
+
+    /* Hide close button on mobile for email signup */
+    .close-bar {
+        display: none;
+    }
+
+    /* Make product cards more touch-friendly */
+    .product-card {
+        padding: 20px;
+        margin-bottom: 15px;
+    }
+
+    .product-actions {
+        gap: 12px;
+    }
+
+    .btn-reserve, .btn-buy, .btn-view {
+        padding: 12px 16px;
+        font-size: 0.95rem;
+        min-height: 44px; /* Apple's recommended minimum touch target */
+    }
+
+    .btn-contact-seller {
+        padding: 12px 16px;
+        font-size: 0.95rem;
+        min-height: 44px;
+    }
+
+    /* Make email signup less intrusive on mobile */
+    .signup-text {
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+
+    /* Improve floating buttons for mobile */
+    .floating-actions {
+        bottom: 20px;
+        right: 20px;
+        gap: 12px;
+    }
+
+    .floating-btn {
+        width: 56px;
+        height: 56px;
+        font-size: 1.2rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1335,6 +1427,13 @@ body {
     .badge {
         width: 100%;
         text-align: center;
+    }
+
+    /* Ensure notification bell shows on smallest screens */
+    .notify-btn {
+        height: 38px;
+        min-width: 38px;
+        padding: 0 10px;
     }
 
     .floating-actions {
