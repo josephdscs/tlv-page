@@ -7,6 +7,9 @@ let currentFilter = 'all';
 let showSoldItems = true;
 let currentSort = 'default';
 
+let currentProductInModal = null;
+let currentImageIndex = 0;
+
 // Fallback example items
 const fallbackItems = [
     {
@@ -18,7 +21,11 @@ const fallbackItems = [
         condition: 'Excellent',
         category: 'furniture',
         images: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800',
-        mediaGallery: ['https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800'],
+        mediaGallery: [
+            'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800',
+            'https://images.unsplash.com/photo-1611269154421-4e27233ac5c7?w=800',
+            'https://images.unsplash.com/photo-1505691938895-1758d7FEB511?w=800'
+        ],
         badges: ['urgent'],
         sold: false,
         soldDate: null
@@ -32,7 +39,10 @@ const fallbackItems = [
         condition: 'Like New',
         category: 'appliances',
         images: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800',
-        mediaGallery: ['https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800'],
+        mediaGallery: [
+            'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800',
+            'https://images.unsplash.com/photo-1556909172-6592f6276834?w=800'
+        ],
         badges: ['staff-pick'],
         sold: false,
         soldDate: null
@@ -46,7 +56,10 @@ const fallbackItems = [
         condition: 'Good',
         category: 'furniture',
         images: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=800',
-        mediaGallery: ['https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=800'],
+        mediaGallery: [
+            'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=800',
+            'https://images.unsplash.com/photo-1544942858-a8e0b6521563?w=800'
+        ],
         badges: ['almost-gone'],
         sold: false,
         soldDate: null
@@ -308,7 +321,7 @@ function initializeEventListeners() {
     // Floating buttons
     const floatingWhatsApp = document.getElementById('floatingWhatsApp');
     if (floatingWhatsApp) {
-        floatingWhatsApp.addEventListener('click', openWhatsApp);
+        floatingWhatsApp.addEventListener('click', () => openWhatsApp());
     }
 
     const floatingCart = document.getElementById('floatingCart');
@@ -358,7 +371,7 @@ function initializeEventListeners() {
     // WhatsApp contact
     const whatsappBtn = document.getElementById('whatsappBtn');
     if (whatsappBtn) {
-        whatsappBtn.addEventListener('click', openWhatsApp);
+        whatsappBtn.addEventListener('click', () => openWhatsApp());
     }
 
     // Mobile notification bell button
@@ -668,117 +681,156 @@ function openProductModal(product) {
         return;
     }
 
-    // Don't open modal on mobile devices - instead just show a toast
-    if (isMobileDevice()) {
-        showToast(`Tap the WhatsApp button below to contact about: ${product.title}`);
-        return;
-    }
+    currentProductInModal = product;
+    currentImageIndex = 0;
 
     const modal = document.getElementById('productModal');
     const modalBody = document.getElementById('modalBody');
-    const discount = Math.round((1 - product.price / product.originalPrice) * 100);
 
     // Update URL and meta tags for deep linking and social sharing
     updateURL(product.id);
     updateMetaTags(product);
 
-    // Get the first valid image URL from mediaGallery for larger display, or use a default placeholder
-    const defaultImageUrl = 'public/placeholder.webp';
-    const firstImageUrl = (product.mediaGallery && product.mediaGallery.length > 0) ? product.mediaGallery[0] : defaultImageUrl;
+    if (isMobileDevice()) {
+        modalBody.innerHTML = createMobileModalContent(product);
+    } else {
+        modalBody.innerHTML = createDesktopModalContent(product);
+        document.addEventListener('keydown', handleKeyPress);
+    }
 
-    modalBody.innerHTML = `
-        <div style="padding: 30px;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;">
-                <div>
-                    ${product.mediaGallery && product.mediaGallery.length > 0 ? `
-                    <div class="product-gallery">
-                        <div class="main-image">
-                            <img src="${firstImageUrl}" alt="${product.title}"
-                                 style="width: 100%; border-radius: 12px; object-fit: cover;">
-                        </div>
-                        ${product.mediaGallery.length > 1 ? `
-                        <div class="thumbnail-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); gap: 10px; margin-top: 10px;">
-                            ${product.mediaGallery.map((img, index) => `
-                                <img src="${img}" alt="${product.title} - Image ${index + 1}"
-                                     onclick="updateMainImage(this.src)"
-                                     style="width: 100%; height: 60px; object-fit: cover; border-radius: 6px; cursor: pointer;">
-                            `).join('')}
-                        </div>` : ''}
-                    </div>` : `
-                    <img src="${defaultImageUrl}" alt="No image available"
-                         style="width: 100%; border-radius: 12px; object-fit: cover;">`}
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function handleKeyPress(e) {
+    if (e.key === 'ArrowLeft') {
+        changeSlide(-1);
+    } else if (e.key === 'ArrowRight') {
+        changeSlide(1);
+    } else if (e.key === 'Escape') {
+        closeModal();
+    }
+}
+
+function changeSlide(direction) {
+    if (!currentProductInModal) return;
+    const images = currentProductInModal.mediaGallery && currentProductInModal.mediaGallery.length > 0 ? currentProductInModal.mediaGallery : ['public/placeholder.webp'];
+
+    currentImageIndex += direction;
+
+    if (currentImageIndex >= images.length) {
+        currentImageIndex = 0;
+    } else if (currentImageIndex < 0) {
+        currentImageIndex = images.length - 1;
+    }
+
+    const mainImage = document.getElementById('mainProductImage');
+    if (mainImage) {
+        mainImage.src = images[currentImageIndex];
+        // Update active thumbnail
+        document.querySelectorAll('.thumbnail-img').forEach((img, i) => {
+            img.classList.toggle('active', i === currentImageIndex);
+        });
+    }
+}
+
+function createMobileModalContent(product) {
+    const images = product.mediaGallery && product.mediaGallery.length > 0 ? product.mediaGallery : ['public/placeholder.webp'];
+
+    return `
+        <div class="mobile-modal-container">
+            <div class="main-image-container">
+                <img src="${images[0]}" alt="${product.title}" id="mainProductImage" class="main-product-image">
+                <div class="mobile-modal-price">₪${product.price}</div>
+                ${images.length > 1 ? `
+                    <button class="gallery-nav prev" onclick="changeSlide(-1)"><i class="fas fa-chevron-left"></i></button>
+                    <button class="gallery-nav next" onclick="changeSlide(1)"><i class="fas fa-chevron-right"></i></button>
+                ` : ''}
+            </div>
+             <button class="btn-modal-whatsapp-mobile" onclick="contactSeller(${JSON.stringify(product).replace(/"/g, '&quot;')})">
+                <i class="fab fa-whatsapp"></i> Chat with Seller
+            </button>
+        </div>
+    `;
+}
+
+function createDesktopModalContent(product) {
+    const images = product.mediaGallery && product.mediaGallery.length > 0 ? product.mediaGallery : ['public/placeholder.webp'];
+
+    return `
+        <div class="modal-grid">
+            <div class="modal-gallery">
+                <div class="main-image-container">
+                    <img src="${images[0]}" alt="${product.title}" id="mainProductImage" class="main-product-image">
+                    ${images.length > 1 ? `
+                        <button class="gallery-nav prev" onclick="changeSlide(-1)"><i class="fas fa-chevron-left"></i></button>
+                        <button class="gallery-nav next" onclick="changeSlide(1)"><i class="fas fa-chevron-right"></i></button>
+                    ` : ''}
                 </div>
-                <div>
-                    <h2 style="margin-bottom: 15px; color: var(--color-soft-black);">${product.title}</h2>
-                    <p style="color: var(--color-gray-dark); margin-bottom: 20px; line-height: 1.6;">${product.description}</p>
-
-                    <div style="display: flex; align-items: center; justify-content: flex-end; margin-bottom: 20px;">
-                        <span style="font-size: 2rem; font-weight: 700; color: var(--color-sage);">₪${product.price}</span>
+                ${images.length > 1 ? `
+                <div class="thumbnail-container">
+                    ${images.map((img, index) => `
+                        <img src="${img}" alt="Thumbnail ${index + 1}"
+                             class="thumbnail-img ${index === 0 ? 'active' : ''}"
+                             onclick="updateMainImage('${img}', ${index})">
+                    `).join('')}
+                </div>` : ''}
+            </div>
+            <div class="modal-details">
+                <h2 class="modal-title">${product.title}</h2>
+                <div class="modal-price">
+                    <span class="current-price">₪${product.price}</span>
+                    ${product.originalPrice ? `<span class="original-price">₪${product.originalPrice}</span>` : ''}
+                </div>
+                <p class="modal-description">${product.description}</p>
+                <div class="product-info-grid">
+                    ${product.condition ? `
+                        <div class="info-item">
+                            <span class="info-label">Condition</span>
+                            <span class="info-value">${product.condition}</span>
+                        </div>` : ''}
+                    <div class="info-item">
+                        <span class="info-label">Category</span>
+                        <span class="info-value">${product.category}</span>
                     </div>
+                </div>
+                <div class="pickup-info">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Pickup from Tel Aviv (full address provided upon purchase)</span>
+                </div>
 
-                    <div style="background: var(--color-gray-light); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                        <p><strong>Condition:</strong> ${product.condition}</p>
-                        <p><strong>Category:</strong> ${product.category}</p>
-                        <p><strong>Pickup:</strong> Tel Aviv location (sent after payment or viewing appointment)</p>
-                        <p style="color: var(--color-sage); font-weight: 600; margin-top: 10px;">
-                            <i class="fas fa-calendar-check"></i> Schedule a viewing appointment - same day available!
-                        </p>
-                    </div>
+                <div class="modal-actions">
+                    <button class="btn-modal-primary" onclick="buyItem(${JSON.stringify(product).replace(/"/g, '&quot;')})">
+                        <i class="fas fa-credit-card"></i> Buy Now
+                    </button>
+                    <button class="btn-modal-secondary" onclick="viewItem(${JSON.stringify(product).replace(/"/g, '&quot;')})">
+                        <i class="fas fa-calendar-check"></i> Schedule Viewing
+                    </button>
+                    <button class="btn-modal-whatsapp" onclick="contactSeller(${JSON.stringify(product).replace(/"/g, '&quot;')})">
+                        <i class="fab fa-whatsapp"></i> Chat with Seller
+                    </button>
+                </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
-                        <button onclick="viewItem(${JSON.stringify(product).replace(/"/g, '&quot;')})"
-                                style="padding: 15px; background: var(--color-sage); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1rem;">
-                            📅 Schedule Viewing
-                        </button>
-                        <button onclick="buyItem(${JSON.stringify(product).replace(/"/g, '&quot;')})"
-                                style="padding: 15px; background: var(--color-warm-yellow); border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1rem;">
-                            💳 Buy Now
-                        </button>
-                    </div>
-
-                    <div style="margin-bottom: 20px;">
-                        <button onclick="contactSeller(${JSON.stringify(product).replace(/"/g, '&quot;')})"
-                                style="width: 100%; padding: 15px; background: #25d366; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                            <i class="fab fa-whatsapp"></i>
-                            Chat with Seller
-                        </button>
-                    </div>
-
-                    <div style="text-align: center;">
-                        <p style="color: var(--color-gray-dark); font-size: 0.9rem; margin-bottom: 10px;">Share this specific item:</p>
-                        <div style="display: flex; justify-content: center; gap: 10px;">
-                            <button onclick="shareProduct(${product.id}, 'whatsapp')"
-                                    style="background: #25d366; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer;">
-                                <i class="fab fa-whatsapp"></i>
-                            </button>
-                            <button onclick="shareProduct(${product.id}, 'facebook')"
-                                    style="background: #1877f2; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer;">
-                                <i class="fab fa-facebook-f"></i>
-                            </button>
-                            <button onclick="shareProduct(${product.id}, 'telegram')"
-                                    style="background: #0088cc; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer;">
-                                <i class="fab fa-telegram-plane"></i>
-                            </button>
-                            <button onclick="copyProductLink(${product.id})"
-                                    style="background: var(--color-charcoal); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer;"
-                                    title="Copy direct link">
-                                <i class="fas fa-link"></i>
-                            </button>
-                        </div>
+                <div class="modal-share">
+                    <span class="share-label">Share this item:</span>
+                    <div class="share-buttons">
+                        <button onclick="shareProduct(${product.id}, 'whatsapp')"><i class="fab fa-whatsapp"></i></button>
+                        <button onclick="shareProduct(${product.id}, 'facebook')"><i class="fab fa-facebook-f"></i></button>
+                        <button onclick="shareProduct(${product.id}, 'telegram')"><i class="fab fa-telegram-plane"></i></button>
+                        <button onclick="copyProductLink(${product.id})"><i class="fas fa-link"></i></button>
                     </div>
                 </div>
             </div>
         </div>
     `;
-
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
 }
 
 function closeModal() {
     const modal = document.getElementById('productModal');
     modal.classList.remove('active');
     document.body.style.overflow = '';
+
+    document.removeEventListener('keydown', handleKeyPress);
 
     // Update URL and meta tags to remove product-specific info
     updateURL();
@@ -879,10 +931,14 @@ function contactSeller(product) {
 
 // WhatsApp integration
 function openWhatsApp(message = '') {
-    const defaultMessage = message || 'Hi! I saw your sale on MovingOutTLV and I\'m interested in some items. Can you help me?';
-    const phoneNumber = '972584162884'; // Updated phone number
-    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(defaultMessage)}`;
-    window.open(url, '_blank');
+    const encodedMessage = encodeURIComponent(message);
+    let whatsappLink = `https://wa.me/972526421995`;
+
+    if (message) {
+        whatsappLink += `?text=${encodedMessage}`;
+    }
+
+    window.open(whatsappLink, '_blank');
 }
 
 // Social sharing
@@ -1168,11 +1224,16 @@ setTimeout(() => {
 }, 1000);
 
 // Image gallery functions
-function updateMainImage(src) {
-    const mainImage = document.querySelector('.main-image img');
+function updateMainImage(src, index) {
+    const mainImage = document.getElementById('mainProductImage');
     if (mainImage) {
         mainImage.src = src;
     }
+    currentImageIndex = index;
+    // Update active thumbnail
+    document.querySelectorAll('.thumbnail-img').forEach((img, i) => {
+        img.classList.toggle('active', i === currentImageIndex);
+    });
 }
 
 // Make functions globally available for inline onclick handlers
