@@ -10,6 +10,11 @@ let currentSort = 'default';
 let currentProductInModal = null;
 let currentImageIndex = 0;
 
+let touchStartX = 0;
+let touchEndX = 0;
+let touchStartY = 0;
+let touchEndY = 0;
+
 // Fallback example items
 const fallbackItems = [
     {
@@ -138,42 +143,42 @@ function getProductFromURL() {
 }
 
 function updateMetaTags(product = null) {
+    const defaultMeta = {
+        title: 'MovingOutTLV - Designer Home Sale | Everything Must Go!',
+        description: 'Exclusive pop-up sale in Tel Aviv! Designer furniture, home goods, and more at unbeatable prices. Pickup only - limited time!',
+        image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200',
+        url: `${window.location.origin}${window.location.pathname}`
+    };
+
+    let meta = { ...defaultMeta };
+
     if (product) {
-        // Get the first image URL and add size parameters for social sharing
-        const firstImageUrl = product.images ? product.images.replace('~mv2', '~mv2_d_1200_630_s_2') : '';
+        const imageUrl = (product.mediaGallery && product.mediaGallery.length > 0) ? product.mediaGallery[0] : product.images;
+        const placeholderUrl = `${window.location.origin}/public/placeholder.webp`;
+        const firstImageUrl = imageUrl ? imageUrl.replace('~mv2', '~mv2_d_1200_630_s_2') : placeholderUrl;
 
-        // Update meta tags for specific product
-        document.title = `${product.title} - ₪${product.price} | MovingOutTLV`;
-        document.querySelector('meta[name="description"]').content = `${product.description} Only ₪${product.price} (was ₪${product.originalPrice}). ${product.condition} condition. Pickup in Tel Aviv.`;
-
-        // Update Open Graph tags
-        document.querySelector('meta[property="og:title"]').content = `${product.title} - ₪${product.price} | MovingOutTLV`;
-        document.querySelector('meta[property="og:description"]').content = `${product.description} Only ₪${product.price} (was ₪${product.originalPrice}). ${product.condition} condition.`;
-        document.querySelector('meta[property="og:image"]').content = firstImageUrl;
-        document.querySelector('meta[property="og:url"]').content = `${window.location.origin}${window.location.pathname}?product=${product.id}`;
-
-        // Update Twitter tags
-        document.querySelector('meta[property="twitter:title"]').content = `${product.title} - ₪${product.price} | MovingOutTLV`;
-        document.querySelector('meta[property="twitter:description"]').content = `${product.description} Only ₪${product.price} (was ₪${product.originalPrice}). ${product.condition} condition.`;
-        document.querySelector('meta[property="twitter:image"]').content = firstImageUrl;
-        document.querySelector('meta[property="twitter:url"]').content = `${window.location.origin}${window.location.pathname}?product=${product.id}`;
-    } else {
-        // Reset to default meta tags
-        document.title = 'MovingOutTLV - Designer Home Sale | Everything Must Go!';
-        document.querySelector('meta[name="description"]').content = 'Exclusive pop-up sale in Tel Aviv! Designer furniture, home goods, and more at unbeatable prices. Pickup only - limited time!';
-
-        // Reset Open Graph tags
-        document.querySelector('meta[property="og:title"]').content = 'MovingOutTLV - Designer Home Sale | Everything Must Go!';
-        document.querySelector('meta[property="og:description"]').content = 'Exclusive pop-up sale in Tel Aviv! Designer furniture, home goods, and more at unbeatable prices. Pickup only - limited time!';
-        document.querySelector('meta[property="og:image"]').content = 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200';
-        document.querySelector('meta[property="og:url"]').content = `${window.location.origin}${window.location.pathname}`;
-
-        // Reset Twitter tags
-        document.querySelector('meta[property="twitter:title"]').content = 'MovingOutTLV - Designer Home Sale | Everything Must Go!';
-        document.querySelector('meta[property="twitter:description"]').content = 'Exclusive pop-up sale in Tel Aviv! Designer furniture, home goods, and more at unbeatable prices. Pickup only - limited time!';
-        document.querySelector('meta[property="twitter:image"]').content = 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200';
-        document.querySelector('meta[property="twitter:url"]').content = `${window.location.origin}${window.location.pathname}`;
+        meta.title = `${product.title} - ₪${product.price} | MovingOutTLV`;
+        const description = `${product.description} Only ₪${product.price}${product.originalPrice ? ` (was ₪${product.originalPrice})` : ''}. ${product.condition} condition.`;
+        meta.description = description;
+        meta.image = firstImageUrl;
+        meta.url = `${window.location.origin}${window.location.pathname}?product=${product.id}`;
     }
+
+    // Update meta tags for specific product
+    document.title = meta.title;
+    document.querySelector('meta[name="description"]').content = meta.description;
+
+    // Update Open Graph tags
+    document.querySelector('meta[property="og:title"]').content = meta.title;
+    document.querySelector('meta[property="og:description"]').content = meta.description;
+    document.querySelector('meta[property="og:image"]').content = meta.image;
+    document.querySelector('meta[property="og:url"]').content = meta.url;
+
+    // Update Twitter tags
+    document.querySelector('meta[property="twitter:title"]').content = meta.title;
+    document.querySelector('meta[property="twitter:description"]').content = meta.description;
+    document.querySelector('meta[property="twitter:image"]').content = meta.image;
+    document.querySelector('meta[property="twitter:url"]').content = meta.url;
 }
 
 function handleURLChange() {
@@ -693,6 +698,10 @@ function openProductModal(product) {
 
     if (isMobileDevice()) {
         modalBody.innerHTML = createMobileModalContent(product);
+        const modalContent = modal.querySelector('.modal-content');
+        if (modalContent) {
+            setupSwipeListeners(modalContent);
+        }
     } else {
         modalBody.innerHTML = createDesktopModalContent(product);
         document.addEventListener('keydown', handleKeyPress);
@@ -731,6 +740,88 @@ function changeSlide(direction) {
         document.querySelectorAll('.thumbnail-img').forEach((img, i) => {
             img.classList.toggle('active', i === currentImageIndex);
         });
+    }
+}
+
+function setupSwipeListeners(element) {
+    element.addEventListener('touchstart', handleTouchStart, { passive: true });
+    element.addEventListener('touchmove', handleTouchMove, { passive: true });
+    element.addEventListener('touchend', handleTouchEnd, { passive: true });
+}
+
+function removeSwipeListeners(element) {
+    element.removeEventListener('touchstart', handleTouchStart);
+    element.removeEventListener('touchmove', handleTouchMove);
+    element.removeEventListener('touchend', handleTouchEnd);
+}
+
+function handleTouchStart(e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    touchEndX = e.touches[0].clientX;
+    touchEndY = e.touches[0].clientY;
+}
+
+function handleTouchMove(e) {
+    if (!e.touches || e.touches.length === 0) return;
+    touchEndX = e.touches[0].clientX;
+    touchEndY = e.touches[0].clientY;
+}
+
+function handleTouchEnd() {
+    if (!touchStartX || !touchStartY) return;
+
+    const horizontalDistance = touchEndX - touchStartX;
+    const verticalDistance = touchEndY - touchStartY;
+    const horizontalThreshold = 50;
+    const verticalThreshold = 75;
+
+    // Prioritize horizontal swipe if it's more significant
+    if (Math.abs(horizontalDistance) > Math.abs(verticalDistance)) {
+        if (currentProductInModal && currentProductInModal.mediaGallery && currentProductInModal.mediaGallery.length > 1) {
+            if (horizontalDistance < -horizontalThreshold) {
+                // Swipe left
+                changeSlide(1);
+            } else if (horizontalDistance > horizontalThreshold) {
+                // Swipe right
+                changeSlide(-1);
+            }
+        }
+    } else {
+        // Vertical swipe for next product
+        if (touchStartY - touchEndY > verticalThreshold) { // Swipe up
+            showNextProduct();
+        }
+    }
+
+    // Reset values
+    touchStartX = 0;
+    touchEndX = 0;
+    touchStartY = 0;
+    touchEndY = 0;
+}
+
+function showNextProduct() {
+    if (!currentProductInModal) return;
+
+    const currentIndex = filteredProducts.findIndex(p => p.id === currentProductInModal.id);
+    if (currentIndex === -1) return;
+
+    const nextIndex = (currentIndex + 1) % filteredProducts.length;
+    const nextProduct = filteredProducts[nextIndex];
+
+    if (nextProduct) {
+        // A little animation/transition effect
+        const modalContent = document.querySelector('.modal.active .modal-content');
+        if (modalContent) {
+            modalContent.style.transition = 'transform 0.3s ease';
+            modalContent.style.transform = 'translateY(-100%)';
+            modalContent.addEventListener('transitionend', () => {
+                openProductModal(nextProduct);
+            }, { once: true });
+        } else {
+             openProductModal(nextProduct);
+        }
     }
 }
 
@@ -827,6 +918,12 @@ function createDesktopModalContent(product) {
 
 function closeModal() {
     const modal = document.getElementById('productModal');
+    if (isMobileDevice()) {
+        const modalContent = modal.querySelector('.modal-content');
+        if (modalContent) {
+            removeSwipeListeners(modalContent);
+        }
+    }
     modal.classList.remove('active');
     document.body.style.overflow = '';
 
@@ -932,7 +1029,7 @@ function contactSeller(product) {
 // WhatsApp integration
 function openWhatsApp(message = '') {
     const encodedMessage = encodeURIComponent(message);
-    let whatsappLink = `https://wa.me/972526421995`;
+    let whatsappLink = `https://wa.me/972584162884`;
 
     if (message) {
         whatsappLink += `?text=${encodedMessage}`;
