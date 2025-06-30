@@ -1022,7 +1022,7 @@ function contactSeller(product) {
     showToast(`Opening chat about ${product.title}... 💬`);
     setTimeout(() => {
         const productUrl = `${window.location.origin}${window.location.pathname}?product=${product.id}`;
-        openWhatsApp(`Hi! I have questions about: ${product.title} (₪${product.price}). Can you tell me more?\n\nDirect link: ${productUrl}`);
+        openWhatsApp(`Hi! I am interested in: ${product.title} (₪${product.price}). Can you tell me more?\n\nDirect link: ${productUrl}`);
     }, 1000);
 }
 
