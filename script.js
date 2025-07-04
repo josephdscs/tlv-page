@@ -31,7 +31,7 @@ const fallbackItems = [
             'https://images.unsplash.com/photo-1611269154421-4e27233ac5c7?w=800',
             'https://images.unsplash.com/photo-1505691938895-1758d7FEB511?w=800'
         ],
-        badges: ['urgent'],
+        badges: ['urgent', 'top2'],
         sold: false,
         soldDate: null
     },
@@ -48,7 +48,7 @@ const fallbackItems = [
             'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800',
             'https://images.unsplash.com/photo-1556909172-6592f6276834?w=800'
         ],
-        badges: ['staff-pick'],
+        badges: ['staff-pick', 'top1'],
         sold: false,
         soldDate: null
     },
@@ -79,7 +79,7 @@ const fallbackItems = [
         category: 'outdoor',
         images: 'https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=800',
         mediaGallery: ['https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=800'],
-        badges: ['urgent'],
+        badges: ['urgent', 'top'],
         sold: false,
         soldDate: null
     },
@@ -499,6 +499,9 @@ function renderProducts() {
     const grid = document.getElementById('productsGrid');
     if (!grid) return;
 
+    // Apply sorting before rendering
+    sortProducts();
+
     // Preserve current view class
     const isListView = grid.classList.contains('list-view');
     grid.className = `products-grid ${isListView ? 'list-view' : ''}`;
@@ -577,16 +580,26 @@ function createProductCard(product) {
     const isFavorite = favorites.includes(product.id);
     const isSold = product.sold;
 
-    const badges = product.badges.map(badge => {
-        let text = '';
-        switch(badge) {
-            case 'urgent': text = '🔥 Almost Gone'; break;
-            case 'staff-pick': text = '⭐ Staff Pick'; break;
-            case 'almost-gone': text = '⚡ Last One'; break;
-            case 'viewing-now': text = '👀 Viewing Now'; break;
-        }
-        return `<span class="product-badge ${badge}">${text}</span>`;
-    }).join('');
+    // Parse badges (handle both string and array formats)
+    let badgeList = [];
+    if (typeof product.badges === 'string') {
+        badgeList = product.badges.split(',').map(b => b.trim()).filter(b => b);
+    } else if (Array.isArray(product.badges)) {
+        badgeList = product.badges;
+    }
+
+    const badges = badgeList
+        .filter(badge => !badge.startsWith('top')) // Hide top badges from UI
+        .map(badge => {
+            let text = '';
+            switch(badge) {
+                case 'urgent': text = '🔥 Almost Gone'; break;
+                case 'staff-pick': text = '⭐ Staff Pick'; break;
+                case 'almost-gone': text = '⚡ Last One'; break;
+                case 'viewing-now': text = '👀 Viewing Now'; break;
+            }
+            return `<span class="product-badge ${badge}">${text}</span>`;
+        }).join('');
 
     // Add sold badge if item is sold
     const soldBadge = isSold ? '<span class="product-badge sold">✅ SOLD</span>' : '';
@@ -692,6 +705,13 @@ function openProductModal(product) {
     const modal = document.getElementById('productModal');
     const modalBody = document.getElementById('modalBody');
 
+    // Reset transition from swipe-up navigation
+    const modalContent = modal.querySelector('.modal-content');
+    if (modalContent) {
+        modalContent.style.transition = 'none';
+        modalContent.style.transform = 'translateY(0)';
+    }
+
     // Update URL and meta tags for deep linking and social sharing
     updateURL(product.id);
     updateMetaTags(product);
@@ -735,7 +755,13 @@ function changeSlide(direction) {
 
     const mainImage = document.getElementById('mainProductImage');
     if (mainImage) {
-        mainImage.src = images[currentImageIndex];
+        mainImage.style.transition = 'opacity 0.3s ease-in-out';
+        mainImage.style.opacity = 0;
+        setTimeout(() => {
+            mainImage.src = images[currentImageIndex];
+            mainImage.style.opacity = 1;
+        }, 300);
+
         // Update active thumbnail
         document.querySelectorAll('.thumbnail-img').forEach((img, i) => {
             img.classList.toggle('active', i === currentImageIndex);
@@ -745,7 +771,7 @@ function changeSlide(direction) {
 
 function setupSwipeListeners(element) {
     element.addEventListener('touchstart', handleTouchStart, { passive: true });
-    element.addEventListener('touchmove', handleTouchMove, { passive: true });
+    element.addEventListener('touchmove', handleTouchMove, { passive: false });
     element.addEventListener('touchend', handleTouchEnd, { passive: true });
 }
 
@@ -766,6 +792,16 @@ function handleTouchMove(e) {
     if (!e.touches || e.touches.length === 0) return;
     touchEndX = e.touches[0].clientX;
     touchEndY = e.touches[0].clientY;
+
+    if (!touchStartX || !touchStartY) return;
+
+    const horizontalDistance = touchEndX - touchStartX;
+    const verticalDistance = touchEndY - touchStartY;
+
+    // If swipe is mostly vertical, prevent page scroll
+    if (Math.abs(verticalDistance) > Math.abs(horizontalDistance)) {
+        e.preventDefault();
+    }
 }
 
 function handleTouchEnd() {
@@ -807,17 +843,28 @@ function showNextProduct() {
     const currentIndex = filteredProducts.findIndex(p => p.id === currentProductInModal.id);
     if (currentIndex === -1) return;
 
-    const nextIndex = (currentIndex + 1) % filteredProducts.length;
+    // Find the next available (not sold) product
+    let nextIndex = (currentIndex + 1) % filteredProducts.length;
+    while (filteredProducts[nextIndex].sold && nextIndex !== currentIndex) {
+        nextIndex = (nextIndex + 1) % filteredProducts.length;
+    }
     const nextProduct = filteredProducts[nextIndex];
 
-    if (nextProduct) {
+    if (nextProduct && nextProduct.id !== currentProductInModal.id) {
         // A little animation/transition effect
         const modalContent = document.querySelector('.modal.active .modal-content');
         if (modalContent) {
-            modalContent.style.transition = 'transform 0.3s ease';
-            modalContent.style.transform = 'translateY(-100%)';
-            modalContent.addEventListener('transitionend', () => {
+            modalContent.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+            modalContent.style.transform = 'translateY(-50px)';
+            modalContent.style.opacity = '0';
+            modalContent.addEventListener('transitionend', function handler() {
+                modalContent.removeEventListener('transitionend', handler);
                 openProductModal(nextProduct);
+                // Reset opacity for the new modal content to appear
+                setTimeout(() => {
+                    modalContent.style.transition = 'opacity 0.3s ease';
+                    modalContent.style.opacity = '1';
+                }, 50);
             }, { once: true });
         } else {
              openProductModal(nextProduct);
@@ -1324,7 +1371,12 @@ setTimeout(() => {
 function updateMainImage(src, index) {
     const mainImage = document.getElementById('mainProductImage');
     if (mainImage) {
-        mainImage.src = src;
+        mainImage.style.transition = 'opacity 0.3s ease-in-out';
+        mainImage.style.opacity = 0;
+        setTimeout(() => {
+            mainImage.src = src;
+            mainImage.style.opacity = 1;
+        }, 300);
     }
     currentImageIndex = index;
     // Update active thumbnail
@@ -1358,19 +1410,68 @@ function debounce(func, wait) {
 
 // Sort products based on current sort option
 function sortProducts() {
-    if (currentSort === 'default') {
-        // Keep original order
-        return;
-    }
-
     filteredProducts.sort((a, b) => {
+        // First, handle top badge sorting
+        const aTopBadge = getTopBadge(a);
+        const bTopBadge = getTopBadge(b);
+
+        // If both have top badges, sort by top number
+        if (aTopBadge && bTopBadge) {
+            return aTopBadge - bTopBadge;
+        }
+
+        // Items with top badges go first
+        if (aTopBadge && !bTopBadge) return -1;
+        if (!aTopBadge && bTopBadge) return 1;
+
+        // For non-top items, apply regular sorting
         if (currentSort === 'price-low') {
             return a.price - b.price;
         } else if (currentSort === 'price-high') {
             return b.price - a.price;
         }
+
+        // Default order for items without top badges
         return 0;
     });
+}
+
+// Helper function to extract top badge number
+function getTopBadge(product) {
+    if (!product.badges || !Array.isArray(product.badges)) {
+        // Handle string badges (comma-separated)
+        if (typeof product.badges === 'string') {
+            const badges = product.badges.split(',').map(b => b.trim());
+            for (const badge of badges) {
+                if (badge.startsWith('top')) {
+                    const match = badge.match(/^top(\d+)$/);
+                    if (match) {
+                        return parseInt(match[1]);
+                    }
+                    // Handle just "top" as top1
+                    if (badge === 'top') {
+                        return 1;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    // Handle array badges
+    for (const badge of product.badges) {
+        if (badge.startsWith('top')) {
+            const match = badge.match(/^top(\d+)$/);
+            if (match) {
+                return parseInt(match[1]);
+            }
+            // Handle just "top" as top1
+            if (badge === 'top') {
+                return 1;
+            }
+        }
+    }
+    return null;
 }
 
 // Sort functionality
