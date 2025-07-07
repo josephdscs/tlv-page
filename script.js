@@ -1567,3 +1567,26 @@ function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 }
+
+// --- Meta tag update logic for deep links ---
+function getProductIdFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('id');
+}
+
+function updateMetaTagsForProduct() {
+    const productId = getProductIdFromUrl();
+    if (productId && window.updateProductMetatags) {
+        if (window.productMetatags[productId]) {
+            window.updateProductMetatags(productId);
+        } else {
+            window.resetMetatags();
+        }
+    } else if (window.resetMetatags) {
+        window.resetMetatags();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', updateMetaTagsForProduct);
+window.addEventListener('popstate', updateMetaTagsForProduct);
+// If you use client-side routing, call updateMetaTagsForProduct() after navigation.
