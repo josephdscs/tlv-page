@@ -1051,7 +1051,7 @@ function showFavorites() {
 function viewItem(product) {
     showToast(`Scheduling viewing appointment for ${product.title}... 📅`);
     setTimeout(() => {
-        const productUrl = `${window.location.origin}${window.location.pathname}?product=${product.id}`;
+        const productUrl = `${window.location.origin}/product/${product.id}/`;
         openWhatsApp(`Hi! I'd like to schedule a viewing appointment for: ${product.title} (₪${product.price}). What times work best for you today or tomorrow?\n\nDirect link: ${productUrl}`);
     }, 1000);
 }
@@ -1060,7 +1060,7 @@ function buyItem(product) {
     showToast(`Connecting you to purchase ${product.title}... 💳`);
     // In a real app, this would open payment gateway
     setTimeout(() => {
-        const productUrl = `${window.location.origin}${window.location.pathname}?product=${product.id}`;
+        const productUrl = `${window.location.origin}/product/${product.id}/`;
         openWhatsApp(`Hi! I want to buy: ${product.title} (₪${product.price}). Ready to pay now!\n\nDirect link: ${productUrl}`);
     }, 1000);
 }
@@ -1068,7 +1068,7 @@ function buyItem(product) {
 function contactSeller(product) {
     showToast(`Opening chat about ${product.title}... 💬`);
     setTimeout(() => {
-        const productUrl = `${window.location.origin}${window.location.pathname}?product=${product.id}`;
+        const productUrl = `${window.location.origin}/product/${product.id}/`;
         openWhatsApp(`Hi! I am interested in: ${product.title} (₪${product.price}). Can you tell me more?\n\nDirect link: ${productUrl}`);
     }, 1000);
 }
@@ -1088,7 +1088,7 @@ function openWhatsApp(message = '') {
 // Social sharing
 function shareProduct(productId, platform) {
     const product = products.find(p => p.id === productId);
-    const productUrl = `${window.location.origin}${window.location.pathname}?product=${productId}`;
+    const productUrl = `${window.location.origin}/product/${productId}/`;
     const text = `Check out this amazing deal: ${product.title} for only ₪${product.price}! (was ₪${product.originalPrice})`;
 
     switch(platform) {
@@ -1105,7 +1105,7 @@ function shareProduct(productId, platform) {
 }
 
 function copyProductLink(productId) {
-    const productUrl = `${window.location.origin}${window.location.pathname}?product=${productId}`;
+    const productUrl = `${window.location.origin}/product/${productId}/`;
 
     if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(productUrl).then(() => {
