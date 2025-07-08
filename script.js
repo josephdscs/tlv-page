@@ -1088,7 +1088,17 @@ function openWhatsApp(message = '') {
 // Social sharing
 function shareProduct(productId, platform) {
     const product = products.find(p => p.id === productId);
-    const productUrl = `${window.location.origin}/product/${productId}/`;
+
+    // Check if we're on a product page and use the current URL if available
+    let productUrl;
+    if (window.location.pathname.includes('/product/') && window.location.pathname.includes(productId)) {
+        // We're on the product page, use current URL
+        productUrl = window.location.href;
+    } else {
+        // Use the product page URL
+        productUrl = `${window.location.origin}/product/${productId}/`;
+    }
+
     const text = `Check out this amazing deal: ${product.title} for only ₪${product.price}! (was ₪${product.originalPrice})`;
 
     switch(platform) {
