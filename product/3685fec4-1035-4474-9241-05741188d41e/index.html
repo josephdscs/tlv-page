@@ -22,41 +22,127 @@ Free with purchase ">
 Free with purchase ">
   <meta property="twitter:image" content="https://static.wixstatic.com/media/c36a51_81d38004464a48b9ab68004f3ac52f83~mv2.jpeg">
   <link rel="icon" type="image/png" href="https://movingouttlv.com/public/favicon.png?v=1">
-  <link rel="stylesheet" href="https://movingouttlv.com/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+  <!-- Sticky Header -->
   <header class="sticky-header">
     <div class="container">
       <div class="header-content">
         <div class="logo">
           <h1><a href="https://movingouttlv.com" style="text-decoration:none;color:inherit;">MovingOut<span class="tlv">TLV</span></a></h1>
         </div>
+        <div class="header-actions">
+          <a href="https://movingouttlv.com" class="btn-secondary" style="text-decoration:none;">
+            <i class="fas fa-home"></i>
+            <span>Back to Home</span>
+          </a>
+        </div>
       </div>
     </div>
   </header>
-  <main class="product-main">
-    <div class="container">
-      <div class="product-detail">
-        <h2>Doll Umbrella Stroller</h2>
-        <div class="product-gallery">
-          <img src="https://static.wixstatic.com/media/c36a51_81d38004464a48b9ab68004f3ac52f83~mv2.jpeg" alt="Doll Umbrella Stroller" style="max-width:400px;width:100%;border-radius:12px;">
+
+  <!-- Product Main Content -->
+  <main class="product-page-main">
+    <div class="product-detail-container">
+      <div class="product-detail-grid">
+        <div class="product-gallery-section">
+          <div class="product-image-container">
+            <img src="https://static.wixstatic.com/media/c36a51_81d38004464a48b9ab68004f3ac52f83~mv2.jpeg" alt="Doll Umbrella Stroller">
+          </div>
         </div>
-        <div class="product-info">
-          <p class="product-desc">It&#39;s a stroller for your dolls
+
+        <div class="product-info-section">
+          <h1 class="product-title">Doll Umbrella Stroller</h1>
+          <p class="product-description">It&#39;s a stroller for your dolls
 Free with purchase </p>
-          <p class="product-price"><strong>Price:</strong> ₪0</p>
-          <p class="product-category"><strong>Category:</strong> Toys</p>
-          <a href="https://movingouttlv.com" class="back-link">← Back to all items</a>
+          <div class="product-price">₪0</div>
+          <div class="product-category"><strong>Category:</strong> Toys</div>
+
+          <div class="product-actions">
+            <a href="https://wa.me/972584162884?text=Hi! I'm interested in the Doll%20Umbrella%20Stroller for ₪0. Can I schedule a viewing?" class="btn-whatsapp">
+              <i class="fab fa-whatsapp"></i>
+              Schedule Viewing
+            </a>
+            <a href="https://wa.me/972584162884?text=Hi! I want to buy the Doll%20Umbrella%20Stroller for ₪0. Can you send me the pickup details?" class="btn-primary">
+              <i class="fas fa-shopping-cart"></i>
+              Buy Now
+            </a>
+            <a href="tel:+972584162884" class="btn-secondary">
+              <i class="fas fa-phone"></i>
+              Call Us
+            </a>
+          </div>
+
+          <div class="share-section">
+            <span class="share-label">Share this item:</span>
+            <div class="share-buttons">
+              <a href="#" class="share-btn whatsapp" onclick="shareProduct('3685fec4-1035-4474-9241-05741188d41e', 'whatsapp')">
+                <i class="fab fa-whatsapp"></i>
+                WhatsApp
+              </a>
+              <a href="#" class="share-btn facebook" onclick="shareProduct('3685fec4-1035-4474-9241-05741188d41e', 'facebook')">
+                <i class="fab fa-facebook-f"></i>
+                Facebook
+              </a>
+              <a href="#" class="share-btn telegram" onclick="shareProduct('3685fec4-1035-4474-9241-05741188d41e', 'telegram')">
+                <i class="fab fa-telegram-plane"></i>
+                Telegram
+              </a>
+            </div>
+          </div>
+
+          <a href="https://movingouttlv.com" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Back to all items
+          </a>
         </div>
       </div>
     </div>
   </main>
+
+  <!-- Footer -->
   <footer class="footer">
     <div class="container">
       <div class="footer-content">
         <p>&copy; 2025 MovingOutTLV • A Family Sale with Love</p>
+        <div class="social-share">
+          <span>Share with friends:</span>
+          <a href="#" class="share-btn whatsapp" onclick="shareProduct('3685fec4-1035-4474-9241-05741188d41e', 'whatsapp')">
+            <i class="fab fa-whatsapp"></i>
+          </a>
+          <a href="#" class="share-btn facebook" onclick="shareProduct('3685fec4-1035-4474-9241-05741188d41e', 'facebook')">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="#" class="share-btn telegram" onclick="shareProduct('3685fec4-1035-4474-9241-05741188d41e', 'telegram')">
+            <i class="fab fa-telegram-plane"></i>
+          </a>
+        </div>
       </div>
     </div>
   </footer>
-</body>
-</html>
+
+  <script>
+    // Share functionality for product pages
+    function shareProduct(productId, platform) {
+      const productUrl = `https://movingouttlv.com/product/${productId}/`;
+      const text = `Check out this amazing deal: Doll Umbrella Stroller for only ₪0!`;
+
+      switch(platform) {
+        case 'whatsapp':
+          window.open(`https://wa.me/?text=${encodeURIComponent(text + '\n\n' + productUrl)}`, '_blank');
+          break;
+        case 'facebook':
+          window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(productUrl)}`, '_blank');
+          break;
+        case 'telegram':
+          window.open(`https://t.me/share/url?url=${encodeURIComponent(productUrl)}&text=${encodeURIComponent(text)}`, '_blank');
+          break;
+      }
+    }
+  </script>
+</body></html>
