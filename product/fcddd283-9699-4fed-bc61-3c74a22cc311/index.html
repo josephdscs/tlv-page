@@ -60,14 +60,14 @@
           <div class="product-category"><strong>Category:</strong> Furniture</div>
 
           <div class="product-actions">
-            <a href="https://wa.me/972584162884?text=Hi! I'm interested in the Coffee%20Table for ₪300. Can I schedule a viewing?" class="btn-whatsapp">
+            <button onclick="openWhatsApp('Hi! I\'m interested in the Coffee Table for ₪300. Can I schedule a viewing?')" class="btn-whatsapp">
               <i class="fab fa-whatsapp"></i>
               Schedule Viewing
-            </a>
-            <a href="https://wa.me/972584162884?text=Hi! I want to buy the Coffee%20Table for ₪300. Can you send me the pickup details?" class="btn-primary">
+            </button>
+            <button onclick="openWhatsApp('Hi! I want to buy the Coffee Table for ₪300. Can you send me the pickup details?')" class="btn-primary">
               <i class="fas fa-shopping-cart"></i>
               Buy Now
-            </a>
+            </button>
             <a href="tel:+972584162884" class="btn-secondary">
               <i class="fas fa-phone"></i>
               Call Us
@@ -123,6 +123,53 @@
   </footer>
 
   <script>
+    // Enhanced WhatsApp integration for mobile
+    function openWhatsApp(message = '') {
+      const encodedMessage = encodeURIComponent(message);
+      let whatsappLink = `https://wa.me/972584162884`;
+
+      if (message) {
+        whatsappLink += `?text=${encodedMessage}`;
+      }
+
+      // Enhanced mobile detection and WhatsApp opening
+      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isAndroid = /Android/.test(navigator.userAgent);
+
+      if (isMobile) {
+        // For mobile devices, try to open WhatsApp app directly
+        if (isIOS) {
+          // iOS: Try WhatsApp app first, then fallback to wa.me
+          const whatsappAppLink = `whatsapp://send?phone=972584162884${message ? `&text=${encodedMessage}` : ''}`;
+          
+          // Try to open WhatsApp app
+          window.location.href = whatsappAppLink;
+          
+          // Fallback to wa.me after a short delay if app doesn't open
+          setTimeout(() => {
+            window.open(whatsappLink, '_blank');
+          }, 1500);
+        } else if (isAndroid) {
+          // Android: Try app intent first
+          const whatsappAppLink = `intent://send?phone=972584162884${message ? `&text=${encodedMessage}` : ''}#Intent;scheme=whatsapp;package=com.whatsapp;end`;
+          
+          try {
+            window.location.href = whatsappAppLink;
+          } catch (e) {
+            // Fallback to wa.me
+            window.open(whatsappLink, '_blank');
+          }
+        } else {
+          // Other mobile browsers
+          window.open(whatsappLink, '_blank');
+        }
+      } else {
+        // Desktop: Use wa.me
+        window.open(whatsappLink, '_blank');
+      }
+    }
+
     // Share functionality for product pages
     function shareProduct(productId, platform) {
       const productUrl = `https://movingouttlv.com/product/${productId}/`;
@@ -141,4 +188,5 @@
       }
     }
   </script>
-</body></html>
+</body>
+</html>

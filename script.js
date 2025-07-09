@@ -1107,17 +1107,13 @@ function openWhatsApp(message = '') {
             // iOS: Try WhatsApp app first, then fallback to wa.me
             const whatsappAppLink = `whatsapp://send?phone=972584162884${message ? `&text=${encodedMessage}` : ''}`;
             
-            // Create a hidden iframe to test app availability
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = whatsappAppLink;
-            document.body.appendChild(iframe);
+            // Try to open WhatsApp app
+            window.location.href = whatsappAppLink;
             
-            // Fallback to wa.me after a short delay
+            // Fallback to wa.me after a short delay if app doesn't open
             setTimeout(() => {
-                document.body.removeChild(iframe);
                 window.open(whatsappLink, '_blank');
-            }, 1000);
+            }, 1500);
         } else if (isAndroid) {
             // Android: Try app intent first
             const whatsappAppLink = `intent://send?phone=972584162884${message ? `&text=${encodedMessage}` : ''}#Intent;scheme=whatsapp;package=com.whatsapp;end`;
