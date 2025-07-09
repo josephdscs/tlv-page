@@ -691,6 +691,20 @@ function isMobileDevice() {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 }
 
+// Enhanced mobile detection with WhatsApp app checking
+function isMobileWithWhatsApp() {
+    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isAndroid = /Android/.test(navigator.userAgent);
+    
+    return {
+        isMobile,
+        isIOS,
+        isAndroid,
+        supportsWhatsAppApp: isMobile && (isIOS || isAndroid)
+    };
+}
+
 // Product modal
 function openProductModal(product) {
     // Don't open modal for sold items
@@ -1082,7 +1096,46 @@ function openWhatsApp(message = '') {
         whatsappLink += `?text=${encodedMessage}`;
     }
 
-    window.open(whatsappLink, '_blank');
+    // Enhanced mobile detection and WhatsApp opening
+    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isAndroid = /Android/.test(navigator.userAgent);
+
+    if (isMobile) {
+        // For mobile devices, try to open WhatsApp app directly
+        if (isIOS) {
+            // iOS: Try WhatsApp app first, then fallback to wa.me
+            const whatsappAppLink = `whatsapp://send?phone=972584162884${message ? `&text=${encodedMessage}` : ''}`;
+            
+            // Create a hidden iframe to test app availability
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = whatsappAppLink;
+            document.body.appendChild(iframe);
+            
+            // Fallback to wa.me after a short delay
+            setTimeout(() => {
+                document.body.removeChild(iframe);
+                window.open(whatsappLink, '_blank');
+            }, 1000);
+        } else if (isAndroid) {
+            // Android: Try app intent first
+            const whatsappAppLink = `intent://send?phone=972584162884${message ? `&text=${encodedMessage}` : ''}#Intent;scheme=whatsapp;package=com.whatsapp;end`;
+            
+            try {
+                window.location.href = whatsappAppLink;
+            } catch (e) {
+                // Fallback to wa.me
+                window.open(whatsappLink, '_blank');
+            }
+        } else {
+            // Other mobile browsers
+            window.open(whatsappLink, '_blank');
+        }
+    } else {
+        // Desktop: Use wa.me
+        window.open(whatsappLink, '_blank');
+    }
 }
 
 // Social sharing
