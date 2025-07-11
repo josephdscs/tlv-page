@@ -33,7 +33,8 @@ const fallbackItems = [
         ],
         badges: ['urgent', 'top2'],
         sold: false,
-        soldDate: null
+        soldDate: null,
+        reserved: false
     },
     {
         id: 'example2',
@@ -50,7 +51,8 @@ const fallbackItems = [
         ],
         badges: ['staff-pick', 'top1'],
         sold: false,
-        soldDate: null
+        soldDate: null,
+        reserved: true
     },
     {
         id: 'example3',
@@ -67,7 +69,8 @@ const fallbackItems = [
         ],
         badges: ['almost-gone'],
         sold: false,
-        soldDate: null
+        soldDate: null,
+        reserved: false
     },
     {
         id: 'example4',
@@ -81,7 +84,8 @@ const fallbackItems = [
         mediaGallery: ['https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=800'],
         badges: ['urgent', 'top'],
         sold: false,
-        soldDate: null
+        soldDate: null,
+        reserved: false
     },
     {
         id: 'example5',
@@ -95,7 +99,8 @@ const fallbackItems = [
         mediaGallery: ['https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800'],
         badges: [],
         sold: true,
-        soldDate: '2025-01-15'
+        soldDate: '2025-01-15',
+        reserved: false
     }
 ];
 
@@ -158,7 +163,7 @@ function updateMetaTags(product = null) {
         const firstImageUrl = imageUrl ? imageUrl.replace('~mv2', '~mv2_d_1200_630_s_2') : placeholderUrl;
 
         meta.title = `${product.title} - ₪${product.price} | MovingOutTLV`;
-        const description = `${product.description} Only ₪${product.price}${product.originalPrice ? ` (was ₪${product.originalPrice})` : ''}. ${product.condition} condition.`;
+        const description = `${product.description || 'Quality item for sale in Tel Aviv!'} Only ₪${product.price}${product.originalPrice ? ` (was ₪${product.originalPrice})` : ''}. ${product.condition ? product.condition + ' condition.' : ''}`;
         meta.description = description;
         meta.image = firstImageUrl;
         meta.url = `${window.location.origin}${window.location.pathname}?product=${product.id}`;
@@ -512,42 +517,51 @@ function renderProducts() {
     document.querySelectorAll('.product-card').forEach((card, index) => {
         const product = filteredProducts[index];
 
-        // Only add click handlers for non-sold items
+        // Add click handlers for non-sold items
         if (!product.sold) {
-            card.addEventListener('click', (e) => {
-                if (!e.target.closest('.btn-buy') && !e.target.closest('.btn-view') && !e.target.closest('.btn-contact-seller') && !e.target.closest('.favorite-btn')) {
-                    openProductModal(product);
+            // Only add modal click handler for non-reserved items
+            if (!product.reserved) {
+                card.addEventListener('click', (e) => {
+                    if (!e.target.closest('.btn-buy') && !e.target.closest('.btn-view') && !e.target.closest('.btn-contact-seller') && !e.target.closest('.favorite-btn')) {
+                        openProductModal(product);
+                    }
+                });
+            }
+
+            // Favorite button (only for non-reserved items)
+            if (!product.reserved) {
+                const favoriteBtn = card.querySelector('.favorite-btn');
+                if (favoriteBtn) {
+                    favoriteBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        toggleFavorite(product.id);
+                    });
                 }
-            });
-
-            // Favorite button
-            const favoriteBtn = card.querySelector('.favorite-btn');
-            if (favoriteBtn) {
-                favoriteBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    toggleFavorite(product.id);
-                });
             }
 
-            // View button
-            const viewBtn = card.querySelector('.btn-view');
-            if (viewBtn) {
-                viewBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    viewItem(product);
-                });
+            // View button (only for non-reserved items)
+            if (!product.reserved) {
+                const viewBtn = card.querySelector('.btn-view');
+                if (viewBtn) {
+                    viewBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        viewItem(product);
+                    });
+                }
             }
 
-            // Buy button
-            const buyBtn = card.querySelector('.btn-buy');
-            if (buyBtn) {
-                buyBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    buyItem(product);
-                });
+            // Buy button (only for non-reserved items)
+            if (!product.reserved) {
+                const buyBtn = card.querySelector('.btn-buy');
+                if (buyBtn) {
+                    buyBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        buyItem(product);
+                    });
+                }
             }
 
-            // Contact seller button
+            // Contact seller button (available for both available and reserved items)
             const contactBtn = card.querySelector('.btn-contact-seller');
             if (contactBtn) {
                 contactBtn.addEventListener('click', (e) => {
@@ -579,6 +593,7 @@ function renderProducts() {
 function createProductCard(product) {
     const isFavorite = favorites.includes(product.id);
     const isSold = product.sold;
+    const isReserved = product.reserved;
 
     // Parse badges (handle both string and array formats)
     let badgeList = [];
@@ -601,8 +616,9 @@ function createProductCard(product) {
             return `<span class="product-badge ${badge}">${text}</span>`;
         }).join('');
 
-    // Add sold badge if item is sold
+    // Add sold badge if item is sold, or reserved badge if item is reserved
     const soldBadge = isSold ? '<span class="product-badge sold">✅ SOLD</span>' : '';
+    const reservedBadge = isReserved && !isSold ? '<span class="product-badge reserved">📋 RESERVED</span>' : '';
 
     // Get the first valid image URL from mediaGallery for larger display, or use a default placeholder
     const defaultImageUrl = 'public/placeholder.webp';
@@ -611,20 +627,24 @@ function createProductCard(product) {
     // Create price display with only current price
     const priceDisplay = isSold ?
         `<span class="current-price sold-price">₪${product.price}</span>` :
+        isReserved ?
+        `<span class="current-price reserved-price">₪${product.price}</span>` :
         `<span class="current-price">₪${product.price}</span>`;
 
     return `
-        <div class="product-card ${isSold ? 'sold-item' : ''}">
+        <div class="product-card ${isSold ? 'sold-item' : ''} ${isReserved && !isSold ? 'reserved-item' : ''}">
             <div class="product-image">
                 <img src="${firstImageUrl}" alt="${product.title}" loading="lazy">
                 <div class="product-badges">
                     ${soldBadge}
-                    ${!isSold ? badges : ''}
+                    ${reservedBadge}
+                    ${!isSold && !isReserved ? badges : ''}
                 </div>
-                ${!isSold ? `<button class="favorite-btn ${isFavorite ? 'active' : ''}">
+                ${!isSold && !isReserved ? `<button class="favorite-btn ${isFavorite ? 'active' : ''}">
                     <i class="fas fa-heart"></i>
                 </button>` : ''}
                 ${isSold ? '<div class="sold-overlay"><span>SOLD</span></div>' : ''}
+                ${isReserved && !isSold ? '<div class="reserved-overlay"><span>RESERVED</span></div>' : ''}
                 ${product.mediaGallery && product.mediaGallery.length > 1 ? `
                 <div class="image-counter">
                     <i class="fas fa-images"></i> ${product.mediaGallery.length}
@@ -633,26 +653,31 @@ function createProductCard(product) {
             <div class="product-content">
                 <div class="product-info">
                     <h4 class="product-title">${product.title}</h4>
-                    <p class="product-description">${product.description}</p>
+                    ${product.description ? `<p class="product-description">${product.description}</p>` : ''}
                     <div class="product-price">
                         ${priceDisplay}
                     </div>
                 </div>
-                ${!isSold ? `
+                ${!isSold && !isReserved ? `
                 <div class="product-actions">
                     <button class="btn-view">📅 Schedule Viewing</button>
                     <button class="btn-buy">💳 Buy Now</button>
-                </div>` : `
+                </div>` : isSold ? `
                 <div class="sold-actions">
                     <button class="btn-sold" disabled>
                         ✅ This item has been sold
+                    </button>
+                </div>` : `
+                <div class="reserved-actions">
+                    <button class="btn-reserved" disabled>
+                        📋 This item is reserved
                     </button>
                 </div>`}
                 ${!isSold ? `
                 <div class="contact-seller">
                     <button class="btn-contact-seller">
                         <i class="fab fa-whatsapp"></i>
-                        Chat with Seller
+                        ${isReserved ? 'Ask about this item' : 'Chat with Seller'}
                     </button>
                 </div>` : ``}
                 <div class="share-product">
@@ -696,7 +721,7 @@ function isMobileWithWhatsApp() {
     const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const isAndroid = /Android/.test(navigator.userAgent);
-    
+
     return {
         isMobile,
         isIOS,
@@ -710,6 +735,12 @@ function openProductModal(product) {
     // Don't open modal for sold items
     if (product.sold) {
         showToast(`This item has been sold on ${formatSoldDate(product.soldDate)}`);
+        return;
+    }
+
+    // Don't open modal for reserved items
+    if (product.reserved) {
+        showToast(`This item is currently reserved. Please contact the seller for more information.`);
         return;
     }
 
@@ -857,9 +888,9 @@ function showNextProduct() {
     const currentIndex = filteredProducts.findIndex(p => p.id === currentProductInModal.id);
     if (currentIndex === -1) return;
 
-    // Find the next available (not sold) product
+    // Find the next available (not sold and not reserved) product
     let nextIndex = (currentIndex + 1) % filteredProducts.length;
-    while (filteredProducts[nextIndex].sold && nextIndex !== currentIndex) {
+    while ((filteredProducts[nextIndex].sold || filteredProducts[nextIndex].reserved) && nextIndex !== currentIndex) {
         nextIndex = (nextIndex + 1) % filteredProducts.length;
     }
     const nextProduct = filteredProducts[nextIndex];
@@ -934,7 +965,7 @@ function createDesktopModalContent(product) {
                     <span class="current-price">₪${product.price}</span>
                     ${product.originalPrice ? `<span class="original-price">₪${product.originalPrice}</span>` : ''}
                 </div>
-                <p class="modal-description">${product.description}</p>
+                ${product.description ? `<p class="modal-description">${product.description}</p>` : ''}
                 <div class="product-info-grid">
                     ${product.condition ? `
                         <div class="info-item">
@@ -1036,7 +1067,7 @@ function showFavorites() {
                              style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
                         <div style="flex: 1;">
                             <h4 style="margin-bottom: 5px;">${product.title}</h4>
-                            <p style="color: var(--color-gray-dark); font-size: 0.9rem; margin-bottom: 10px;">${product.description.substring(0, 80)}...</p>
+                            ${product.description ? `<p style="color: var(--color-gray-dark); font-size: 0.9rem; margin-bottom: 10px;">${product.description.substring(0, 80)}...</p>` : ''}
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <span style="font-weight: 600; color: var(--color-sage);">₪${product.price}</span>
                                 <button onclick="toggleFavorite(${product.id}); showFavorites();"
@@ -1106,10 +1137,10 @@ function openWhatsApp(message = '') {
         if (isIOS) {
             // iOS: Try WhatsApp app first, then fallback to wa.me
             const whatsappAppLink = `whatsapp://send?phone=972584162884${message ? `&text=${encodedMessage}` : ''}`;
-            
+
             // Try to open WhatsApp app
             window.location.href = whatsappAppLink;
-            
+
             // Fallback to wa.me after a short delay if app doesn't open
             setTimeout(() => {
                 window.open(whatsappLink, '_blank');
@@ -1117,7 +1148,7 @@ function openWhatsApp(message = '') {
         } else if (isAndroid) {
             // Android: Try app intent first
             const whatsappAppLink = `intent://send?phone=972584162884${message ? `&text=${encodedMessage}` : ''}#Intent;scheme=whatsapp;package=com.whatsapp;end`;
-            
+
             try {
                 window.location.href = whatsappAppLink;
             } catch (e) {
@@ -1293,9 +1324,9 @@ function performSearch() {
     // Filter products based on search term with whitespace handling
     let searchResults = products.filter(product =>
         product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (product.description && product.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (product.category ? product.category.toLowerCase().trim() : '').includes(searchTerm.toLowerCase()) ||
-        product.condition.toLowerCase().includes(searchTerm.toLowerCase())
+        (product.condition && product.condition.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
     // Apply category filter if not "all"

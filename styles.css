@@ -669,7 +669,17 @@ body {
     min-width: 120px;
 }
 
+.products-grid.list-view .reserved-actions {
+    min-width: 120px;
+}
+
 .products-grid.list-view .btn-sold {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.products-grid.list-view .btn-reserved {
     padding: 8px 12px;
     font-size: 0.8rem;
     white-space: nowrap;
@@ -684,6 +694,11 @@ body {
 }
 
 .products-grid.list-view .sold-overlay {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+}
+
+.products-grid.list-view .reserved-overlay {
     font-size: 0.9rem;
     padding: 6px 12px;
 }
@@ -1621,6 +1636,17 @@ body {
     box-shadow: var(--shadow-soft);
 }
 
+/* Reserved Items Styling */
+.product-card.reserved-item {
+    opacity: 0.85;
+    position: relative;
+}
+
+.product-card.reserved-item:hover {
+    transform: none;
+    box-shadow: var(--shadow-soft);
+}
+
 .sold-overlay {
     position: absolute;
     top: 50%;
@@ -1635,9 +1661,27 @@ body {
     z-index: 5;
 }
 
+.reserved-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 140, 0, 0.9);
+    color: white;
+    padding: 10px 20px;
+    border-radius: var(--radius-small);
+    font-weight: 700;
+    font-size: 1.1rem;
+    z-index: 5;
+}
+
 .sold-price {
     text-decoration: line-through;
     opacity: 0.6;
+}
+
+.reserved-price {
+    opacity: 0.8;
 }
 
 .sold-date {
@@ -1651,6 +1695,10 @@ body {
     margin-top: 15px;
 }
 
+.reserved-actions {
+    margin-top: 15px;
+}
+
 .btn-sold {
     width: 100%;
     padding: 12px;
@@ -1661,6 +1709,24 @@ body {
     font-weight: 600;
     cursor: not-allowed;
     font-size: 0.9rem;
+}
+
+.btn-reserved {
+    width: 100%;
+    padding: 12px;
+    background: #ff8c00;
+    color: white;
+    border: 1px solid #ff8c00;
+    border-radius: var(--radius-small);
+    font-weight: 600;
+    cursor: not-allowed;
+    font-size: 0.9rem;
+}
+
+.product-badge.reserved {
+    background: #ff8c00;
+    color: white;
+    font-weight: 700;
 }
 
 /* Sold Toggle Button */
