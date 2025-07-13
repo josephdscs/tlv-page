@@ -10,6 +10,28 @@ let currentSort = 'default';
 let currentProductInModal = null;
 let currentImageIndex = 0;
 
+// Ensure image URLs include a jpeg extension if none is present
+function ensureJpegExtension(url) {
+    if (!url) return url;
+    const [base, query] = url.split('?');
+    if (!/\.(jpe?g|png|webp|gif|svg)$/i.test(base)) {
+        return `${base}.jpeg${query ? `?${query}` : ''}`;
+    }
+    return url;
+}
+
+// Normalize image URLs for all products
+function sanitizeProductImages(productList) {
+    productList.forEach(p => {
+        if (Array.isArray(p.mediaGallery)) {
+            p.mediaGallery = p.mediaGallery.map(ensureJpegExtension);
+        }
+        if (typeof p.images === 'string') {
+            p.images = ensureJpegExtension(p.images);
+        }
+    });
+}
+
 let touchStartX = 0;
 let touchEndX = 0;
 let touchStartY = 0;
@@ -110,6 +132,7 @@ async function fetchProducts() {
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         console.log('Development mode detected - using fallback items');
         products = fallbackItems;
+        sanitizeProductImages(products);
         window.dispatchEvent(new Event('productsLoaded'));
         return;
     }
@@ -119,6 +142,7 @@ async function fetchProducts() {
         const data = await response.json();
         if (data.success && data.data && data.data.length > 0) {
             products = data.data;
+            sanitizeProductImages(products);
             // Dispatch event when products are loaded
             window.dispatchEvent(new Event('productsLoaded'));
         } else {
