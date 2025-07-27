@@ -152,10 +152,22 @@
                     <button class="view-btn" data-view="list">
                         <i class="fas fa-list"></i>
                     </button>
-                    <button class="view-btn sold-toggle" id="soldToggle" data-view="sold" title="Show/Hide Sold Items">
-                        <i class="fas fa-eye-slash"></i>
-                        <span class="sold-count">3</span>
-                    </button>
+                    <div class="item-toggles">
+                        <label class="checkbox-toggle">
+                            <input type="checkbox" id="showSoldItems">
+                            <span class="checkbox-label">
+                                <i class="fas fa-check-circle"></i>
+                                Sold (<span id="soldCount">0</span>)
+                            </span>
+                        </label>
+                        <label class="checkbox-toggle">
+                            <input type="checkbox" id="showReservedItems" checked>
+                            <span class="checkbox-label">
+                                <i class="fas fa-clock"></i>
+                                Reserved (<span id="reservedCount">0</span>)
+                            </span>
+                        </label>
+                    </div>
                 </div>
             </div>
             <div class="products-grid" id="productsGrid">

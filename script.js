@@ -4,7 +4,8 @@ let filteredProducts = [];
 let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 let currentView = 'grid';
 let currentFilter = 'all';
-let showSoldItems = true;
+let showSoldItems = false;
+let showReservedItems = true;
 let currentSort = 'default';
 
 let currentProductInModal = null;
@@ -244,23 +245,11 @@ function initializeSite() {
     initializeEventListeners();
     updateCartCounts();
     updateStats();
-    updateSoldCount();
-    updateSoldToggleVisibility();
+    updateItemCounts();
     updateLifestyleButtonVisibility();
 
     // Initialize notification bell state for mobile
     initializeNotificationBell();
-
-    // Set sold toggle to active state by default
-    const soldBtn = document.getElementById('soldToggle');
-    if (soldBtn) {
-        soldBtn.classList.add('active');
-        const icon = soldBtn.querySelector('i');
-        if (icon) {
-            icon.className = 'fas fa-eye';
-        }
-        soldBtn.title = 'Hide Sold Items';
-    }
 
     // Check for deep link on page load
     handleURLChange();
@@ -291,13 +280,21 @@ document.addEventListener('DOMContentLoaded', function() {
 // Listen for products to be loaded
 window.addEventListener('productsLoaded', initializeSite);
 
-function updateSoldCount() {
+function updateItemCounts() {
     const soldCount = products.filter(p => p.sold).length;
-    const soldCountElement = document.querySelector('.sold-count');
+    const reservedCount = products.filter(p => p.reserved && !p.sold).length;
+    
+    const soldCountElement = document.getElementById('soldCount');
+    const reservedCountElement = document.getElementById('reservedCount');
+    
     if (soldCountElement) {
         soldCountElement.textContent = soldCount;
     }
-    updateSoldToggleVisibility();
+    if (reservedCountElement) {
+        reservedCountElement.textContent = reservedCount;
+    }
+    
+    updateCheckboxVisibility();
 }
 
 // Event listeners
@@ -309,15 +306,19 @@ function initializeEventListeners() {
 
     // View buttons
     document.querySelectorAll('.view-btn').forEach(btn => {
-        if (!btn.classList.contains('sold-toggle')) {
-            btn.addEventListener('click', handleViewChange);
-        }
+        btn.addEventListener('click', handleViewChange);
     });
 
-    // Sold toggle
-    const soldToggle = document.getElementById('soldToggle');
-    if (soldToggle) {
-        soldToggle.addEventListener('click', handleSoldToggle);
+    // Sold and Reserved checkboxes
+    const showSoldCheckbox = document.getElementById('showSoldItems');
+    const showReservedCheckbox = document.getElementById('showReservedItems');
+    
+    if (showSoldCheckbox) {
+        showSoldCheckbox.addEventListener('change', handleSoldToggle);
+    }
+    
+    if (showReservedCheckbox) {
+        showReservedCheckbox.addEventListener('change', handleReservedToggle);
     }
 
     // Sort dropdown
@@ -436,25 +437,14 @@ function initializeEventListeners() {
 }
 
 // Sold toggle functionality
-function handleSoldToggle() {
-    showSoldItems = !showSoldItems;
-    const soldBtn = document.getElementById('soldToggle');
-    if (!soldBtn) return;
+function handleSoldToggle(e) {
+    showSoldItems = e.target.checked;
+    applyCurrentFilter();
+}
 
-    const icon = soldBtn.querySelector('i');
-    if (!icon) return;
-
-    if (showSoldItems) {
-        icon.className = 'fas fa-eye';
-        soldBtn.classList.add('active');
-        soldBtn.title = 'Hide Sold Items';
-    } else {
-        icon.className = 'fas fa-eye-slash';
-        soldBtn.classList.remove('active');
-        soldBtn.title = 'Show Sold Items';
-    }
-
-    // Re-apply current filter with new sold visibility
+// Reserved toggle functionality
+function handleReservedToggle(e) {
+    showReservedItems = e.target.checked;
     applyCurrentFilter();
 }
 
@@ -478,9 +468,12 @@ function applyCurrentFilter() {
         });
     }
 
-    // Filter by sold status
+    // Filter by sold and reserved status
     if (!showSoldItems) {
         filteredProducts = filteredProducts.filter(product => !product.sold);
+    }
+    if (!showReservedItems) {
+        filteredProducts = filteredProducts.filter(product => !product.reserved);
     }
 
     // Apply sorting
@@ -1360,9 +1353,12 @@ function performSearch() {
         );
     }
 
-    // Apply sold filter
+    // Apply sold and reserved filters
     if (!showSoldItems) {
         searchResults = searchResults.filter(product => !product.sold);
+    }
+    if (!showReservedItems) {
+        searchResults = searchResults.filter(product => !product.reserved);
     }
 
     filteredProducts = searchResults;
@@ -1605,22 +1601,29 @@ function handleSortChange(e) {
     renderProducts();
 }
 
-function updateSoldToggleVisibility() {
-    const soldToggle = document.getElementById('soldToggle');
-    if (!soldToggle) return;
+function updateCheckboxVisibility() {
+    const soldCheckbox = document.getElementById('showSoldItems');
+    const reservedCheckbox = document.getElementById('showReservedItems');
+    const itemToggles = document.querySelector('.item-toggles');
+    
+    if (!itemToggles) return;
 
     const hasSoldItems = products.some(product => product.sold);
+    const hasReservedItems = products.some(product => product.reserved && !product.sold);
 
-    if (hasSoldItems) {
-        soldToggle.style.display = 'flex';
-        // Update the sold count
-        const soldCount = products.filter(product => product.sold).length;
-        const soldCountElement = soldToggle.querySelector('.sold-count');
-        if (soldCountElement) {
-            soldCountElement.textContent = soldCount;
+    // Show/hide the entire toggles section if there are any sold or reserved items
+    if (hasSoldItems || hasReservedItems) {
+        itemToggles.style.display = 'flex';
+        
+        // Show/hide individual checkboxes
+        if (soldCheckbox) {
+            soldCheckbox.closest('.checkbox-toggle').style.display = hasSoldItems ? 'flex' : 'none';
+        }
+        if (reservedCheckbox) {
+            reservedCheckbox.closest('.checkbox-toggle').style.display = hasReservedItems ? 'flex' : 'none';
         }
     } else {
-        soldToggle.style.display = 'none';
+        itemToggles.style.display = 'none';
     }
 }
 
