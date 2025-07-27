@@ -1404,8 +1404,8 @@ function updateCartCounts() {
 function updateStats() {
     const totalItemsElement = document.getElementById('totalItems');
     if (totalItemsElement) {
-        // Count only available (non-sold) items
-        const availableItems = products.filter(product => !product.sold).length;
+        // Count only available (non-sold and non-reserved) items
+        const availableItems = products.filter(product => !product.sold && !product.reserved).length;
         totalItemsElement.textContent = availableItems;
     }
 }
@@ -1413,8 +1413,8 @@ function updateStats() {
 function animateStats() {
     const totalItems = document.getElementById('totalItems');
     if (totalItems) {
-        // Count only available (non-sold) items
-        const availableItems = products.filter(product => !product.sold).length;
+        // Count only available (non-sold and non-reserved) items
+        const availableItems = products.filter(product => !product.sold && !product.reserved).length;
         animateNumber(totalItems, availableItems);
     }
 }
