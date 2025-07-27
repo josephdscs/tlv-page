@@ -281,19 +281,6 @@ document.addEventListener('DOMContentLoaded', function() {
 window.addEventListener('productsLoaded', initializeSite);
 
 function updateItemCounts() {
-    const soldCount = products.filter(p => p.sold).length;
-    const reservedCount = products.filter(p => p.reserved && !p.sold).length;
-    
-    const soldCountElement = document.getElementById('soldCount');
-    const reservedCountElement = document.getElementById('reservedCount');
-    
-    if (soldCountElement) {
-        soldCountElement.textContent = soldCount;
-    }
-    if (reservedCountElement) {
-        reservedCountElement.textContent = reservedCount;
-    }
-    
     updateCheckboxVisibility();
 }
 
