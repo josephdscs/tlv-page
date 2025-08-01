@@ -856,7 +856,7 @@ function changeSlide(direction) {
         mainImage.style.transition = 'opacity 0.3s ease-in-out';
         mainImage.style.opacity = 0;
         setTimeout(() => {
-            mainImage.src = images[currentImageIndex];
+            setImageSrcWithFallback(mainImage, images[currentImageIndex]);
             mainImage.style.opacity = 1;
         }, 300);
 
