@@ -55,7 +55,7 @@
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="https://static.wixstatic.com/media/c36a51_5cc9b7e240fb4f48af5d354bacefe7df~mv2.jpeg" alt="Moosh-Moosh Soft Plush Buddies">
+            <img src="https://static.wixstatic.com/media/c36a51_5cc9b7e240fb4f48af5d354bacefe7df~mv2.jpeg" alt="Moosh-Moosh Soft Plush Buddies" data-fallback="https://static.wixstatic.com/media/c36a51_5cc9b7e240fb4f48af5d354bacefe7df~mv2.jpg" onerror="handleImageError(this)">
           </div>
         </div>
 
@@ -131,6 +131,13 @@
   </footer>
 
   <script>
+    function handleImageError(img) {
+      if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+      }
+    }
     // Enhanced WhatsApp integration for mobile
     function openWhatsApp(message = '') {
       const encodedMessage = encodeURIComponent(message);

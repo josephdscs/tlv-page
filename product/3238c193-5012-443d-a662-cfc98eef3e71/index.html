@@ -52,7 +52,7 @@ Dimensions available on third photo">
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="https://static.wixstatic.com/media/4ccfb3_62f4630bfa9d4d63a2b19df3433baa2e~mv2.jpeg" alt="Teal Pull-Out Couch ">
+            <img src="https://static.wixstatic.com/media/4ccfb3_62f4630bfa9d4d63a2b19df3433baa2e~mv2.jpeg" alt="Teal Pull-Out Couch " data-fallback="https://static.wixstatic.com/media/4ccfb3_62f4630bfa9d4d63a2b19df3433baa2e~mv2.jpg" onerror="handleImageError(this)">
           </div>
         </div>
 
@@ -127,6 +127,13 @@ Dimensions available on third photo</p>
   </footer>
 
   <script>
+    function handleImageError(img) {
+      if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+      }
+    }
     // Enhanced WhatsApp integration for mobile
     function openWhatsApp(message = '') {
       const encodedMessage = encodeURIComponent(message);

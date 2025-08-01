@@ -52,7 +52,7 @@ Extended dimensions 88x233">
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="https://static.wixstatic.com/media/4ccfb3_2bdc4826508240ec9e32dcaefce8cd20~mv2.png" alt="Extendable Dining Room Table (including 5 chairs)">
+            <img src="https://static.wixstatic.com/media/4ccfb3_2bdc4826508240ec9e32dcaefce8cd20~mv2.png.jpeg" alt="Extendable Dining Room Table (including 5 chairs)" data-fallback="https://static.wixstatic.com/media/4ccfb3_2bdc4826508240ec9e32dcaefce8cd20~mv2.png.jpg" onerror="handleImageError(this)">
           </div>
         </div>
 
@@ -127,6 +127,13 @@ Extended dimensions 88x233</p>
   </footer>
 
   <script>
+    function handleImageError(img) {
+      if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+      }
+    }
     // Enhanced WhatsApp integration for mobile
     function openWhatsApp(message = '') {
       const encodedMessage = encodeURIComponent(message);

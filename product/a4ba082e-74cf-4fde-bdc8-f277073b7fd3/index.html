@@ -52,7 +52,7 @@ Can provide boxes in black ">
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="https://static.wixstatic.com/media/4ccfb3_a31dcb20415c412cbe2230a90d3fd8a1~mv2.jpg" alt="Ikea Kallax 4*4">
+            <img src="https://static.wixstatic.com/media/4ccfb3_a31dcb20415c412cbe2230a90d3fd8a1~mv2.jpg" alt="Ikea Kallax 4*4" data-fallback="https://static.wixstatic.com/media/4ccfb3_a31dcb20415c412cbe2230a90d3fd8a1~mv2.jpeg" onerror="handleImageError(this)">
           </div>
         </div>
 
@@ -127,6 +127,13 @@ Can provide boxes in black </p>
   </footer>
 
   <script>
+    function handleImageError(img) {
+      if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+      }
+    }
     // Enhanced WhatsApp integration for mobile
     function openWhatsApp(message = '') {
       const encodedMessage = encodeURIComponent(message);

@@ -49,7 +49,7 @@
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="https://static.wixstatic.com/media/4ccfb3_328813c1f68c441e962c0cad73ad9d17~mv2.jpeg" alt="Numu Breathable Mattress 130/70 ">
+            <img src="https://static.wixstatic.com/media/4ccfb3_328813c1f68c441e962c0cad73ad9d17~mv2.jpeg" alt="Numu Breathable Mattress 130/70 " data-fallback="https://static.wixstatic.com/media/4ccfb3_328813c1f68c441e962c0cad73ad9d17~mv2.jpg" onerror="handleImageError(this)">
           </div>
         </div>
 
@@ -123,6 +123,13 @@
   </footer>
 
   <script>
+    function handleImageError(img) {
+      if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+      }
+    }
     // Enhanced WhatsApp integration for mobile
     function openWhatsApp(message = '') {
       const encodedMessage = encodeURIComponent(message);

@@ -55,7 +55,7 @@ Comes with mosquito net, storage case and activity arch ">
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="https://static.wixstatic.com/media/4ccfb3_3b4a4ceb09fc4e109f15af2a358f88cc~mv2.png" alt="Sportline Connecting Crib">
+            <img src="https://static.wixstatic.com/media/4ccfb3_3b4a4ceb09fc4e109f15af2a358f88cc~mv2.png.jpeg" alt="Sportline Connecting Crib" data-fallback="https://static.wixstatic.com/media/4ccfb3_3b4a4ceb09fc4e109f15af2a358f88cc~mv2.png.jpg" onerror="handleImageError(this)">
           </div>
         </div>
 
@@ -131,6 +131,13 @@ Comes with mosquito net, storage case and activity arch </p>
   </footer>
 
   <script>
+    function handleImageError(img) {
+      if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+      }
+    }
     // Enhanced WhatsApp integration for mobile
     function openWhatsApp(message = '') {
       const encodedMessage = encodeURIComponent(message);
