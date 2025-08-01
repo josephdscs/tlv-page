@@ -49,7 +49,7 @@
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="https://static.wixstatic.com/media/4ccfb3_5451979b593847aea92181433039703c~mv2.png" alt="Hilis Baby Fence ">
+            <img src="https://static.wixstatic.com/media/4ccfb3_5451979b593847aea92181433039703c~mv2.png.jpeg" alt="Hilis Baby Fence " data-fallback="https://static.wixstatic.com/media/4ccfb3_5451979b593847aea92181433039703c~mv2.png.jpg" onerror="handleImageError(this)">
           </div>
         </div>
 
@@ -123,6 +123,13 @@
   </footer>
 
   <script>
+    function handleImageError(img) {
+      if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+      }
+    }
     // Enhanced WhatsApp integration for mobile
     function openWhatsApp(message = '') {
       const encodedMessage = encodeURIComponent(message);

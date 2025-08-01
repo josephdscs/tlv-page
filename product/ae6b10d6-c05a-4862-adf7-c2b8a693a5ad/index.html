@@ -52,7 +52,7 @@
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="https://static.wixstatic.com/media/4ccfb3_4a4cba0d2018494786215c01b7ac2719~mv2.png" alt="Gold Line WINTER XL – Powerful Heater Fan for Winter">
+            <img src="https://static.wixstatic.com/media/4ccfb3_4a4cba0d2018494786215c01b7ac2719~mv2.png.jpeg" alt="Gold Line WINTER XL – Powerful Heater Fan for Winter" data-fallback="https://static.wixstatic.com/media/4ccfb3_4a4cba0d2018494786215c01b7ac2719~mv2.png.jpg" onerror="handleImageError(this)">
           </div>
         </div>
 
@@ -127,6 +127,13 @@
   </footer>
 
   <script>
+    function handleImageError(img) {
+      if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+      }
+    }
     // Enhanced WhatsApp integration for mobile
     function openWhatsApp(message = '') {
       const encodedMessage = encodeURIComponent(message);

@@ -49,7 +49,7 @@
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="https://static.wixstatic.com/media/c36a51_a1c42724593f469da1861be526df0647~mv2.jpeg" alt="Lakeshore Learning Mix &amp; Match Farm Animals">
+            <img src="https://static.wixstatic.com/media/c36a51_a1c42724593f469da1861be526df0647~mv2.jpeg" alt="Lakeshore Learning Mix &amp;amp; Match Farm Animals" data-fallback="https://static.wixstatic.com/media/c36a51_a1c42724593f469da1861be526df0647~mv2.jpg" onerror="handleImageError(this)">
           </div>
         </div>
 
@@ -123,6 +123,13 @@
   </footer>
 
   <script>
+    function handleImageError(img) {
+      if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+      }
+    }
     // Enhanced WhatsApp integration for mobile
     function openWhatsApp(message = '') {
       const encodedMessage = encodeURIComponent(message);

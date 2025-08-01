@@ -70,7 +70,7 @@ All sizes L/XL">
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="https://static.wixstatic.com/media/c36a51_090df5573623479c99ea66db44287178~mv2.jpg" alt="Maternity Clothes">
+            <img src="https://static.wixstatic.com/media/c36a51_090df5573623479c99ea66db44287178~mv2.jpg" alt="Maternity Clothes" data-fallback="https://static.wixstatic.com/media/c36a51_090df5573623479c99ea66db44287178~mv2.jpeg" onerror="handleImageError(this)">
           </div>
         </div>
 
@@ -151,6 +151,13 @@ All sizes L/XL</p>
   </footer>
 
   <script>
+    function handleImageError(img) {
+      if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+      }
+    }
     // Enhanced WhatsApp integration for mobile
     function openWhatsApp(message = '') {
       const encodedMessage = encodeURIComponent(message);

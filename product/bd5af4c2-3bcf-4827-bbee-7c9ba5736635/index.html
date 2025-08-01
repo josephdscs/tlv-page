@@ -49,7 +49,7 @@
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="https://static.wixstatic.com/media/c36a51_fabb1cb0f0e94bd08e79cf0529d6a39e~mv2.jpg" alt="Melissa &amp; Doug Catch &amp; Count Magnetic Fishing Rod Set">
+            <img src="https://static.wixstatic.com/media/c36a51_fabb1cb0f0e94bd08e79cf0529d6a39e~mv2.jpg" alt="Melissa &amp;amp; Doug Catch &amp;amp; Count Magnetic Fishing Rod Set" data-fallback="https://static.wixstatic.com/media/c36a51_fabb1cb0f0e94bd08e79cf0529d6a39e~mv2.jpeg" onerror="handleImageError(this)">
           </div>
         </div>
 
@@ -123,6 +123,13 @@
   </footer>
 
   <script>
+    function handleImageError(img) {
+      if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+      }
+    }
     // Enhanced WhatsApp integration for mobile
     function openWhatsApp(message = '') {
       const encodedMessage = encodeURIComponent(message);

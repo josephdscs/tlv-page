@@ -55,7 +55,7 @@ All equivalent to size M/L
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="https://static.wixstatic.com/media/c36a51_a8c03ab4c8034310bd4041e2d3886938~mv2.jpeg" alt="Wedding Guest Outfits ">
+            <img src="https://static.wixstatic.com/media/c36a51_a8c03ab4c8034310bd4041e2d3886938~mv2.jpeg" alt="Wedding Guest Outfits " data-fallback="https://static.wixstatic.com/media/c36a51_a8c03ab4c8034310bd4041e2d3886938~mv2.jpg" onerror="handleImageError(this)">
           </div>
         </div>
 
@@ -131,6 +131,13 @@ All equivalent to size M/L
   </footer>
 
   <script>
+    function handleImageError(img) {
+      if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+      }
+    }
     // Enhanced WhatsApp integration for mobile
     function openWhatsApp(message = '') {
       const encodedMessage = encodeURIComponent(message);

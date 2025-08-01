@@ -33,6 +33,55 @@ function sanitizeProductImages(productList) {
     });
 }
 
+// Build primary and fallback image URLs for jpg/jpeg differences
+function getImageUrls(url) {
+    if (!url) return { primary: 'public/placeholder.webp', fallback: null };
+    const [base, query] = url.split('?');
+    const suffix = query ? `?${query}` : '';
+
+    if (/\.(jpe?g|png|webp|gif|svg)$/i.test(base)) {
+        if (base.toLowerCase().endsWith('.jpg')) {
+            return { primary: url, fallback: `${base.slice(0, -4)}.jpeg${suffix}` };
+        } else if (base.toLowerCase().endsWith('.jpeg')) {
+            return { primary: url, fallback: `${base.slice(0, -5)}.jpg${suffix}` };
+        }
+        return { primary: url, fallback: null };
+    }
+
+    return {
+        primary: `${base}.jpeg${suffix}`,
+        fallback: `${base}.jpg${suffix}`
+    };
+}
+
+// Fallback handler for images
+function handleImgError(img) {
+    if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+    } else {
+        img.onerror = null;
+        img.src = 'public/placeholder.webp';
+    }
+}
+
+function createImgTag(url, alt, lazy = true) {
+    const { primary, fallback } = getImageUrls(url);
+    const lazyAttr = lazy ? ' loading="lazy"' : '';
+    const fallbackAttr = fallback ? ` data-fallback="${fallback}" onerror="handleImgError(this)"` : '';
+    return `<img src="${primary}" alt="${alt.replace(/"/g, '&quot;')}"${lazyAttr}${fallbackAttr}>`;
+}
+
+function setImageSrcWithFallback(imgElement, url) {
+    const { primary, fallback } = getImageUrls(url);
+    imgElement.src = primary;
+    if (fallback) {
+        imgElement.dataset.fallback = fallback;
+        imgElement.onerror = function() { handleImgError(imgElement); };
+    }
+}
+
 let touchStartX = 0;
 let touchEndX = 0;
 let touchStartY = 0;
@@ -638,7 +687,7 @@ function createProductCard(product) {
     return `
         <div class="product-card ${isSold ? 'sold-item' : ''} ${isReserved && !isSold ? 'reserved-item' : ''}">
             <div class="product-image">
-                <img src="${firstImageUrl}" alt="${product.title}" loading="lazy">
+                ${createImgTag(firstImageUrl, product.title)}
                 <div class="product-badges">
                     ${soldBadge}
                     ${reservedBadge}
@@ -927,7 +976,7 @@ function createMobileModalContent(product) {
     return `
         <div class="mobile-modal-container">
             <div class="main-image-container">
-                <img src="${images[0]}" alt="${product.title}" id="mainProductImage" class="main-product-image">
+                ${createImgTag(images[0], product.title, false).replace('<img', `<img id="mainProductImage" class="main-product-image"`)}
                 <div class="mobile-modal-price">₪${product.price}</div>
                 ${images.length > 1 ? `
                     <button class="gallery-nav prev" onclick="changeSlide(-1)"><i class="fas fa-chevron-left"></i></button>
@@ -948,7 +997,7 @@ function createDesktopModalContent(product) {
         <div class="modal-grid">
             <div class="modal-gallery">
                 <div class="main-image-container">
-                    <img src="${images[0]}" alt="${product.title}" id="mainProductImage" class="main-product-image">
+                    ${createImgTag(images[0], product.title, false).replace('<img', `<img id="mainProductImage" class="main-product-image"`)}
                     ${images.length > 1 ? `
                         <button class="gallery-nav prev" onclick="changeSlide(-1)"><i class="fas fa-chevron-left"></i></button>
                         <button class="gallery-nav next" onclick="changeSlide(1)"><i class="fas fa-chevron-right"></i></button>
@@ -957,9 +1006,7 @@ function createDesktopModalContent(product) {
                 ${images.length > 1 ? `
                 <div class="thumbnail-container">
                     ${images.map((img, index) => `
-                        <img src="${img}" alt="Thumbnail ${index + 1}"
-                             class="thumbnail-img ${index === 0 ? 'active' : ''}"
-                             onclick="updateMainImage('${img}', ${index})">
+                        ${createImgTag(img, 'Thumbnail ' + (index + 1), false).replace('<img', `<img class="thumbnail-img ${index === 0 ? 'active' : ''}" onclick="updateMainImage('${img}', ${index})"`)}
                     `).join('')}
                 </div>` : ''}
             </div>
@@ -1471,7 +1518,7 @@ function updateMainImage(src, index) {
         mainImage.style.transition = 'opacity 0.3s ease-in-out';
         mainImage.style.opacity = 0;
         setTimeout(() => {
-            mainImage.src = src;
+            setImageSrcWithFallback(mainImage, src);
             mainImage.style.opacity = 1;
         }, 300);
     }

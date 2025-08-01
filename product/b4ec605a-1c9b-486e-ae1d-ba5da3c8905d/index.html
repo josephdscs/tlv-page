@@ -55,7 +55,7 @@ Extra 55 shekel for three bamboo boxes">
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="https://static.wixstatic.com/media/4ccfb3_fbfbd5371a2c4d00a547789027b7793a~mv2.jpg" alt="Ikea Kallax 1*4">
+            <img src="https://static.wixstatic.com/media/4ccfb3_fbfbd5371a2c4d00a547789027b7793a~mv2.jpg" alt="Ikea Kallax 1*4" data-fallback="https://static.wixstatic.com/media/4ccfb3_fbfbd5371a2c4d00a547789027b7793a~mv2.jpeg" onerror="handleImageError(this)">
           </div>
         </div>
 
@@ -131,6 +131,13 @@ Extra 55 shekel for three bamboo boxes</p>
   </footer>
 
   <script>
+    function handleImageError(img) {
+      if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+      }
+    }
     // Enhanced WhatsApp integration for mobile
     function openWhatsApp(message = '') {
       const encodedMessage = encodeURIComponent(message);

@@ -49,7 +49,7 @@
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="https://static.wixstatic.com/media/c36a51_0b2107f75a934788b344e06f6d429261~mv2.jpg" alt="Decathlon RunRide 100">
+            <img src="https://static.wixstatic.com/media/c36a51_0b2107f75a934788b344e06f6d429261~mv2.jpg" alt="Decathlon RunRide 100" data-fallback="https://static.wixstatic.com/media/c36a51_0b2107f75a934788b344e06f6d429261~mv2.jpeg" onerror="handleImageError(this)">
           </div>
         </div>
 
@@ -123,6 +123,13 @@
   </footer>
 
   <script>
+    function handleImageError(img) {
+      if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+      }
+    }
     // Enhanced WhatsApp integration for mobile
     function openWhatsApp(message = '') {
       const encodedMessage = encodeURIComponent(message);

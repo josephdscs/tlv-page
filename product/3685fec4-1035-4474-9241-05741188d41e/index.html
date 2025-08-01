@@ -52,7 +52,7 @@ Free with purchase ">
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="https://static.wixstatic.com/media/c36a51_81d38004464a48b9ab68004f3ac52f83~mv2.jpeg" alt="Doll Umbrella Stroller">
+            <img src="https://static.wixstatic.com/media/c36a51_81d38004464a48b9ab68004f3ac52f83~mv2.jpeg" alt="Doll Umbrella Stroller" data-fallback="https://static.wixstatic.com/media/c36a51_81d38004464a48b9ab68004f3ac52f83~mv2.jpg" onerror="handleImageError(this)">
           </div>
         </div>
 
@@ -127,6 +127,13 @@ Free with purchase </p>
   </footer>
 
   <script>
+    function handleImageError(img) {
+      if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+      }
+    }
     // Enhanced WhatsApp integration for mobile
     function openWhatsApp(message = '') {
       const encodedMessage = encodeURIComponent(message);

@@ -17,6 +17,25 @@ function escapeHtml(str) {
     .replace(/'/g, '&#39;');
 }
 
+function buildImageTag(url, title) {
+  const [base, query] = url.split('?');
+  const suffix = query ? `?${query}` : '';
+  let primary = url;
+  let fallback = '';
+
+  if (/\.jpg$/i.test(base)) {
+    fallback = `${base.slice(0, -4)}.jpeg${suffix}`;
+  } else if (/\.jpeg$/i.test(base)) {
+    fallback = `${base.slice(0, -5)}.jpg${suffix}`;
+  } else {
+    primary = `${base}.jpeg${suffix}`;
+    fallback = `${base}.jpg${suffix}`;
+  }
+
+  const fallbackAttr = fallback ? ` data-fallback="${fallback}" onerror="handleImageError(this)"` : '';
+  return `<img src="${primary}" alt="${escapeHtml(title)}"${fallbackAttr}>`;
+}
+
 function buildProductHtml(product) {
   const url = `${BASE_URL}/product/${product.id}/`;
   const image = product.mediaGallery && product.mediaGallery.length > 0 ? product.mediaGallery[0] : `${BASE_URL}/public/poster.jpg`;
@@ -25,6 +44,8 @@ function buildProductHtml(product) {
   const category = escapeHtml(product.category || '');
   const price = product.price;
   const originalPrice = product.originalPrice || product.price;
+
+  const imgTag = buildImageTag(image, title);
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -77,7 +98,7 @@ function buildProductHtml(product) {
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="${image}" alt="${title}">
+            ${imgTag}
           </div>
         </div>
 
@@ -151,6 +172,13 @@ function buildProductHtml(product) {
   </footer>
 
   <script>
+    function handleImageError(img) {
+      if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+      }
+    }
     // Enhanced WhatsApp integration for mobile
     function openWhatsApp(message = '') {
       const encodedMessage = encodeURIComponent(message);
