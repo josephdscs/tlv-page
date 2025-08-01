@@ -64,7 +64,7 @@ Countdown: Beat the clock with increasing difficulty.">
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="https://static.wixstatic.com/media/c36a51_88394c7c478942ea8601d95f1c87c821~mv2.jpg" alt="Chicco Basket League">
+            <img src="https://static.wixstatic.com/media/c36a51_88394c7c478942ea8601d95f1c87c821~mv2.jpg" alt="Chicco Basket League" data-fallback="https://static.wixstatic.com/media/c36a51_88394c7c478942ea8601d95f1c87c821~mv2.jpeg" onerror="handleImageError(this)">
           </div>
         </div>
 
@@ -143,6 +143,13 @@ Countdown: Beat the clock with increasing difficulty.</p>
   </footer>
 
   <script>
+    function handleImageError(img) {
+      if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+      }
+    }
     // Enhanced WhatsApp integration for mobile
     function openWhatsApp(message = '') {
       const encodedMessage = encodeURIComponent(message);

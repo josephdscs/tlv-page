@@ -70,7 +70,7 @@ Reflectors on the wheels.">
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="https://static.wixstatic.com/media/c36a51_cd3d210f881e454881f9e80eddc2d476~mv2.jpg" alt="City bike">
+            <img src="https://static.wixstatic.com/media/c36a51_cd3d210f881e454881f9e80eddc2d476~mv2.jpg" alt="City bike" data-fallback="https://static.wixstatic.com/media/c36a51_cd3d210f881e454881f9e80eddc2d476~mv2.jpeg" onerror="handleImageError(this)">
           </div>
         </div>
 
@@ -151,6 +151,13 @@ Reflectors on the wheels.</p>
   </footer>
 
   <script>
+    function handleImageError(img) {
+      if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+      }
+    }
     // Enhanced WhatsApp integration for mobile
     function openWhatsApp(message = '') {
       const encodedMessage = encodeURIComponent(message);

@@ -49,7 +49,7 @@
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="https://static.wixstatic.com/media/c36a51_d982c1e820b44431a8e0b8cb43b573d2~mv2.jpg" alt="Bright Starts Lights and Colors Driver Toy Steering Wheel">
+            <img src="https://static.wixstatic.com/media/c36a51_d982c1e820b44431a8e0b8cb43b573d2~mv2.jpg" alt="Bright Starts Lights and Colors Driver Toy Steering Wheel" data-fallback="https://static.wixstatic.com/media/c36a51_d982c1e820b44431a8e0b8cb43b573d2~mv2.jpeg" onerror="handleImageError(this)">
           </div>
         </div>
 
@@ -123,6 +123,13 @@
   </footer>
 
   <script>
+    function handleImageError(img) {
+      if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+      }
+    }
     // Enhanced WhatsApp integration for mobile
     function openWhatsApp(message = '') {
       const encodedMessage = encodeURIComponent(message);

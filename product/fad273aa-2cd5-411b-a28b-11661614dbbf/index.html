@@ -55,7 +55,7 @@ Metal kitchen pans for an added 35 nis ">
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="https://static.wixstatic.com/media/c36a51_f3d4404b4e3a46e4923730f497a8c983~mv2.jpg" alt=" Ikea Play Kitchen">
+            <img src="https://static.wixstatic.com/media/c36a51_f3d4404b4e3a46e4923730f497a8c983~mv2.jpg" alt=" Ikea Play Kitchen" data-fallback="https://static.wixstatic.com/media/c36a51_f3d4404b4e3a46e4923730f497a8c983~mv2.jpeg" onerror="handleImageError(this)">
           </div>
         </div>
 
@@ -131,6 +131,13 @@ Metal kitchen pans for an added 35 nis </p>
   </footer>
 
   <script>
+    function handleImageError(img) {
+      if (img.dataset.fallback) {
+        img.onerror = null;
+        img.src = img.dataset.fallback;
+        img.removeAttribute('data-fallback');
+      }
+    }
     // Enhanced WhatsApp integration for mobile
     function openWhatsApp(message = '') {
       const encodedMessage = encodeURIComponent(message);
