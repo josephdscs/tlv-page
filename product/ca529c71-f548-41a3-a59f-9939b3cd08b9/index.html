@@ -9,7 +9,7 @@
   <meta property="og:url" content="https://movingouttlv.com/product/ca529c71-f548-41a3-a59f-9939b3cd08b9/">
   <meta property="og:title" content="Grey Armchair | MovingOutTLV">
   <meta property="og:description" content="Great for sitting">
-  <meta property="og:image" content="https://static.wixstatic.com/media/4ccfb3_e762696e23c94030ade010a5bf14d295~mv2.png">
+  <meta property="og:image" content="https://static.wixstatic.com/media/4ccfb3_881937d76b2840af845b737baf5aecb8~mv2.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:site_name" content="MovingOutTLV">
@@ -17,7 +17,7 @@
   <meta property="twitter:url" content="https://movingouttlv.com/product/ca529c71-f548-41a3-a59f-9939b3cd08b9/">
   <meta property="twitter:title" content="Grey Armchair | MovingOutTLV">
   <meta property="twitter:description" content="Great for sitting">
-  <meta property="twitter:image" content="https://static.wixstatic.com/media/4ccfb3_e762696e23c94030ade010a5bf14d295~mv2.png">
+  <meta property="twitter:image" content="https://static.wixstatic.com/media/4ccfb3_881937d76b2840af845b737baf5aecb8~mv2.jpg">
   <link rel="icon" type="image/png" href="https://movingouttlv.com/public/favicon.png?v=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,22 +49,22 @@
       <div class="product-detail-grid">
         <div class="product-gallery-section">
           <div class="product-image-container">
-            <img src="https://static.wixstatic.com/media/4ccfb3_e762696e23c94030ade010a5bf14d295~mv2.png.jpeg" alt="Grey Armchair" data-fallback="https://static.wixstatic.com/media/4ccfb3_e762696e23c94030ade010a5bf14d295~mv2.png.jpg" onerror="handleImageError(this)">
+            <img src="https://static.wixstatic.com/media/4ccfb3_881937d76b2840af845b737baf5aecb8~mv2.jpg" alt="Grey Armchair">
           </div>
         </div>
 
         <div class="product-info-section">
           <h1 class="product-title">Grey Armchair</h1>
           <p class="product-description">Great for sitting</p>
-          <div class="product-price">₪300</div>
+          <div class="product-price">₪440</div>
           <div class="product-category"><strong>Category:</strong> Furniture </div>
 
           <div class="product-actions">
-            <button onclick="openWhatsApp('Hi! I\'m interested in the Grey Armchair for ₪300. Can I schedule a viewing?')" class="btn-whatsapp">
+            <button onclick="openWhatsApp('Hi! I\'m interested in the Grey Armchair for ₪440. Can I schedule a viewing?')" class="btn-whatsapp">
               <i class="fab fa-whatsapp"></i>
               Schedule Viewing
             </button>
-            <button onclick="openWhatsApp('Hi! I want to buy the Grey Armchair for ₪300. Can you send me the pickup details?')" class="btn-primary">
+            <button onclick="openWhatsApp('Hi! I want to buy the Grey Armchair for ₪440. Can you send me the pickup details?')" class="btn-primary">
               <i class="fas fa-shopping-cart"></i>
               Buy Now
             </button>
@@ -149,10 +149,10 @@
         if (isIOS) {
           // iOS: Try WhatsApp app first, then fallback to wa.me
           const whatsappAppLink = `whatsapp://send?phone=972584162884${message ? `&text=${encodedMessage}` : ''}`;
-          
+
           // Try to open WhatsApp app
           window.location.href = whatsappAppLink;
-          
+
           // Fallback to wa.me after a short delay if app doesn't open
           setTimeout(() => {
             window.open(whatsappLink, '_blank');
@@ -160,7 +160,7 @@
         } else if (isAndroid) {
           // Android: Try app intent first
           const whatsappAppLink = `intent://send?phone=972584162884${message ? `&text=${encodedMessage}` : ''}#Intent;scheme=whatsapp;package=com.whatsapp;end`;
-          
+
           try {
             window.location.href = whatsappAppLink;
           } catch (e) {
@@ -180,7 +180,7 @@
     // Share functionality for product pages
     function shareProduct(productId, platform) {
       const productUrl = `https://movingouttlv.com/product/${productId}/`;
-      const text = `Check out this amazing deal: Grey Armchair for only ₪300!`;
+      const text = `Check out this amazing deal: Grey Armchair for only ₪440!`;
 
       switch(platform) {
         case 'whatsapp':

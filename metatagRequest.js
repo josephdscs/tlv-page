@@ -2,10 +2,55 @@ const products = {
     "success": true,
     "data": [
         {
+            "id": "b250ac47-6556-431e-893d-5d1e29f0baca",
+            "title": "Peugeot 3008 ",
+            "description": "Premium 2020\n73000 KM\nGreat Condition",
+            "category": "Outdoors",
+            "images": "",
+            "mediaGallery": [],
+            "badges": [],
+            "sold": false,
+            "reserved": false
+        },
+        {
+            "id": "dd0b451b-7840-427c-9f25-383285c6defe",
+            "title": "Tacx Cycle Force Swing T 1460 Trainer Flywheel Indoor Magnetic",
+            "description": "Cycling trainer ",
+            "price": 250,
+            "category": "Outdoor",
+            "images": "",
+            "mediaGallery": [
+                "https://static.wixstatic.com/media/4ccfb3_0236ffa55f324a29b06c750868393d3d~mv2",
+                "https://static.wixstatic.com/media/4ccfb3_5d5c3ba439af418883ab4b1c19ae62c0~mv2"
+            ],
+            "badges": [
+                "top2"
+            ],
+            "sold": false,
+            "reserved": false
+        },
+        {
+            "id": "5dcbeba2-e8e9-4da1-9492-8508bb144c4c",
+            "title": "Foldable bed SANDVIKA",
+            "description": "Foldable bed perfect for guests. 80x190cm",
+            "price": 150,
+            "category": "Furniture",
+            "images": "",
+            "mediaGallery": [
+                "https://static.wixstatic.com/media/4ccfb3_23cc29eb53a04e9c81037fcb8e169faf~mv2",
+                "https://static.wixstatic.com/media/4ccfb3_6b25ca2ce9a4415da669b1ac92bdf201~mv2"
+            ],
+            "badges": [
+                "top2"
+            ],
+            "sold": false,
+            "reserved": false
+        },
+        {
             "id": "6fcc361e-7b26-458a-b73b-80cbae6a4b42",
             "title": "Vintage Porcelain Tea Set – Red Leaf Design",
-            "description": "A beautiful, classic tea set with delicate red leaf accents. Includes cups, saucers, and small bowls — perfect for hosting or adding charm to your kitchen.",
-            "price": 100,
+            "description": "Classic tea set. Includes cups, saucers, and small bowls ",
+            "price": 80,
             "category": "Kitchen",
             "images": "",
             "mediaGallery": [
@@ -18,7 +63,7 @@ const products = {
         {
             "id": "f8bfe28b-e85c-4de3-abd2-ddede22e4982",
             "title": "Arpenaz Base M – 6-Person Camping Tent (Quechua, Decathlon)",
-            "description": "Spacious, durable, and quick to set up. This 6-person tent is perfect for family camping or group getaways, offering shade and ventilation wherever you go.",
+            "description": "6-person tent. Spacious, durable, and quick to set up. ",
             "price": 300,
             "category": "Outdoor",
             "images": "",
@@ -36,7 +81,7 @@ const products = {
         {
             "id": "2ff9e42e-d471-4f83-a270-50cd0cb1c797",
             "title": "Star Tower Fan + Timer – Lasko High Velocity Cooling",
-            "description": "Reliable, powerful, and easy to use. Set the built-in timer and enjoy steady airflow throughout your space. Great for bedrooms and living areas.",
+            "description": "Has a built-in timer and provides steady airflow throughout your space. Great for bedrooms and living areas.",
             "price": 120,
             "category": "Furniture",
             "images": "",
@@ -51,7 +96,7 @@ const products = {
         {
             "id": "2f2dc051-2fdf-4a4c-b7c2-366465dbdf83",
             "title": "Gold Line ATL-92ETS – Air Cooler Tower Fan with Remote",
-            "description": "Stay cool effortlessly. This modern tower fan delivers strong airflow, quiet operation, and full control with the included remote. Ideal for hot summer days.\n",
+            "description": "Delivers strong airflow, quiet operation, and full control with the included remote. \n",
             "price": 120,
             "category": "Furniture",
             "images": "",
@@ -66,7 +111,7 @@ const products = {
         {
             "id": "ae6b10d6-c05a-4862-adf7-c2b8a693a5ad",
             "title": "Gold Line WINTER XL – Powerful Heater Fan for Winter",
-            "description": "Efficient heating for winter, refreshing airflow for summer. Sleek design, fast performance, and perfect for home or office comfort all year round.\n",
+            "description": "Efficient heating for winter, refreshing airflow for summer\n",
             "price": 100,
             "category": "Furniture",
             "images": "",
@@ -138,7 +183,7 @@ const products = {
             "id": "26c2b406-d7fd-4879-837f-74b6b013c57c",
             "title": "Ikea RAST",
             "description": "3-drawer chest of drawers, pine, ‎62x70 cm. \nBuilt Like New",
-            "price": 190,
+            "price": 150,
             "originalPrice": 295,
             "images": "",
             "mediaGallery": [
@@ -154,7 +199,7 @@ const products = {
             "id": "ee9759a3-cc23-4885-af4b-acdd575cd1f5",
             "title": "PandaZZZ Classic Mattress ",
             "description": "190*80\nBought half a year ago at 1500\nSuper comfy \nGreat option for a Toddler bed (Montessori style) ",
-            "price": 900,
+            "price": 850,
             "category": "Furniture ",
             "images": "",
             "mediaGallery": [
@@ -250,7 +295,7 @@ const products = {
             "id": "fd12ca1c-8857-43e8-8ee0-86b049a82ea0",
             "title": "Ikea bed frame with storage compartment",
             "description": "‎160x200 cm‎",
-            "price": 1200,
+            "price": 1000,
             "category": "Furniture ",
             "images": "",
             "mediaGallery": [
@@ -260,7 +305,7 @@ const products = {
             "badges": [
                 "top"
             ],
-            "sold": false,
+            "sold": true,
             "reserved": false
         },
         {
@@ -348,7 +393,7 @@ const products = {
                 "https://static.wixstatic.com/media/c36a51_4740136a23764c83b87bca5a187bcd26~mv2.jpg"
             ],
             "badges": [],
-            "sold": false,
+            "sold": true,
             "reserved": false
         },
         {
@@ -381,12 +426,13 @@ const products = {
         },
         {
             "id": "a2a21e84-35dd-46c5-b756-8d4ca5be88b7",
-            "title": "Lakeshore Learning Mix & Match Farm Animals",
+            "title": "Mix & Match Farm Animals",
             "description": "Set of 6",
             "price": 55,
             "category": "Toys",
             "images": "",
             "mediaGallery": [
+                "https://static.wixstatic.com/media/4ccfb3_cfdbcda21c5143df97bd5710fe3f8b50~mv2.jpg",
                 "https://static.wixstatic.com/media/c36a51_a1c42724593f469da1861be526df0647~mv2.jpeg"
             ],
             "badges": [],
@@ -416,6 +462,8 @@ const products = {
             "category": "Baby",
             "images": "",
             "mediaGallery": [
+                "https://static.wixstatic.com/media/4ccfb3_455db700eeed46709b7e3f4b9f6dcb54~mv2.jpg",
+                "https://static.wixstatic.com/media/4ccfb3_412cacbc51664b45910bd674578e8091~mv2.jpg",
                 "https://static.wixstatic.com/media/c36a51_839fb68a8bf64b5f97862cce313deabb~mv2.jpg"
             ],
             "badges": [],
@@ -552,7 +600,7 @@ const products = {
             "id": "6528070b-2af2-4c2a-8546-ebde5b6cc1b4",
             "title": "Kids bike from Decathlon",
             "description": "16\" Children's Bike for Ages 4 to 6, DISCOVER 100 Model - White",
-            "price": 550,
+            "price": 450,
             "category": "Outdoor",
             "images": "",
             "mediaGallery": [
@@ -743,7 +791,7 @@ const products = {
                 "https://static.wixstatic.com/media/c36a51_2cafdf50b1a94560bf2f01493b06e842~mv2.png"
             ],
             "badges": [],
-            "sold": false,
+            "sold": true,
             "reserved": false
         },
         {
@@ -764,7 +812,7 @@ const products = {
             "id": "b88fedaf-78a6-4efe-a35f-644bdab4f6f4",
             "title": "Numu Breathable Mattress 130/70 ",
             "description": "The Numu breathable mattress is designed to enhance baby safety and comfort during sleep. Includes Numu sheet ",
-            "price": 350,
+            "price": 200,
             "originalPrice": 700,
             "category": "Baby",
             "images": "",
@@ -880,7 +928,7 @@ const products = {
             "id": "c7c5a634-cd42-4ef4-85d0-13e2291dfee0",
             "title": "Hilis Baby Fence ",
             "description": "4x4 panels with activity board (M - 193x155)",
-            "price": 550,
+            "price": 500,
             "category": "Baby",
             "images": "",
             "mediaGallery": [
@@ -919,7 +967,7 @@ const products = {
                 "https://static.wixstatic.com/media/4ccfb3_870b97daf71c4dfea8baa408d4161607~mv2.webp"
             ],
             "badges": [],
-            "sold": false,
+            "sold": true,
             "reserved": false
         },
         {
@@ -932,9 +980,7 @@ const products = {
             "mediaGallery": [
                 "https://static.wixstatic.com/media/4ccfb3_956c22ec045745f7a7766414fe50c99a~mv2.png"
             ],
-            "badges": [
-                "top1"
-            ],
+            "badges": [],
             "sold": false,
             "reserved": true
         },
@@ -966,20 +1012,6 @@ const products = {
             "reserved": true
         },
         {
-            "id": "2b8d5bf0-f150-4053-8e6a-f256a962cd7a",
-            "title": "Baby Crib + Mattress ",
-            "description": "Can include fitted sheets ",
-            "price": 200,
-            "category": "Baby",
-            "images": "",
-            "mediaGallery": [
-                "https://static.wixstatic.com/media/4ccfb3_a1e0cc9d7dff41bb85c5c4ee860fb4bc~mv2.png"
-            ],
-            "badges": [],
-            "sold": false,
-            "reserved": false
-        },
-        {
             "id": "6ef6fb25-3608-4f5c-8723-60f96578fbd0",
             "title": "Whirlpool Dishwasher",
             "price": 350,
@@ -996,14 +1028,19 @@ const products = {
             "id": "ca529c71-f548-41a3-a59f-9939b3cd08b9",
             "title": "Grey Armchair",
             "description": "Great for sitting",
-            "price": 300,
+            "price": 440,
+            "originalPrice": 1190,
             "category": "Furniture ",
             "images": "",
             "mediaGallery": [
-                "https://static.wixstatic.com/media/4ccfb3_e762696e23c94030ade010a5bf14d295~mv2.png",
-                "https://static.wixstatic.com/media/4ccfb3_0fa2fd9dd988470485b9a787877bd51a~mv2.png"
+                "https://static.wixstatic.com/media/4ccfb3_881937d76b2840af845b737baf5aecb8~mv2.jpg",
+                "https://static.wixstatic.com/media/4ccfb3_ca7c9c236917437d9c16bc3a2749bbc4~mv2.webp",
+                "https://static.wixstatic.com/media/4ccfb3_9dbfacb7b1fc442e97b82004285d69c5~mv2.webp",
+                "https://static.wixstatic.com/media/4ccfb3_bd4bf3d16d684ad39fa2731baefa5935~mv2.jpg"
             ],
-            "badges": [],
+            "badges": [
+                "top"
+            ],
             "sold": false,
             "reserved": false
         },
@@ -1039,7 +1076,7 @@ const products = {
             "id": "bf8d7f40-c447-4033-b397-e3cc816498de",
             "title": "55-inch TV",
             "description": "4k Metz",
-            "price": 1000,
+            "price": 825,
             "category": "Appliances",
             "images": "",
             "mediaGallery": [
@@ -1055,7 +1092,7 @@ const products = {
             "id": "adedaae0-376b-4bcc-8333-c30344f2d7e6",
             "title": "Extendable Dining Room Table (including 5 chairs)",
             "description": "Photos show the table not extended (dimensions: 88x160)\nExtended dimensions 88x233",
-            "price": 900,
+            "price": 600,
             "category": "Furniture",
             "images": "",
             "mediaGallery": [
@@ -1077,7 +1114,9 @@ const products = {
             "mediaGallery": [
                 "https://static.wixstatic.com/media/4ccfb3_3e1a7cb8e22d4e7d80d5785bec35b3bb~mv2.png"
             ],
-            "badges": [],
+            "badges": [
+                "top2"
+            ],
             "sold": false,
             "reserved": false
         },
@@ -1092,29 +1131,27 @@ const products = {
             ],
             "badges": [],
             "condition": "Excellent",
-            "sold": false,
+            "sold": true,
             "reserved": false
         },
         {
             "id": "716f71b3-eea8-45b1-879a-da5e70eed4f6",
             "title": "Sportline Connecting Crib",
             "description": "Attaches to parents' bed\n6 height position\nComes with mosquito net, storage case and activity arch ",
-            "price": 500,
+            "price": 450,
             "category": "Baby",
             "images": "",
             "mediaGallery": [
                 "https://static.wixstatic.com/media/4ccfb3_3b4a4ceb09fc4e109f15af2a358f88cc~mv2.png"
             ],
-            "badges": [
-                "top2"
-            ],
-            "sold": false,
+            "badges": [],
+            "sold": true,
             "reserved": false
         },
         {
             "id": "9fea0e39-2838-42c8-9dba-8fadf9eddbab",
             "title": "Changing Table Dresser ",
-            "price": 600,
+            "price": 500,
             "category": "Baby",
             "images": "",
             "mediaGallery": [
@@ -1130,7 +1167,7 @@ const products = {
             "id": "3238c193-5012-443d-a662-cfc98eef3e71",
             "title": "Teal Pull-Out Couch ",
             "description": "Pulls out into a bed and also has storage space \nDimensions available on third photo",
-            "price": 2900,
+            "price": 2500,
             "category": "Furniture ",
             "images": "",
             "mediaGallery": [
